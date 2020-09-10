@@ -3,10 +3,13 @@
   "scripts": {
     "start": "umi dev",
     "build": "umi build",
+    "analyze": "cross-env ANALYZE=1 umi build",
     "postinstall": "umi generate tmp",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
     "test": "umi-test",
-    "test:coverage": "umi-test --coverage"
+    "test:coverage": "umi-test --coverage",
+    "lint": "umi-lint --eslint src/",
+    "precommit": "umi-lint --staged --eslint --stylelint --prettier --fix"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
@@ -29,5 +32,9 @@
     "react-dom": "^16.12.0",
     "umi": "^3.2.20",
     "yorkie": "^2.0.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.2",
+    "umi-lint": "^2.0.2"
   }
 }
