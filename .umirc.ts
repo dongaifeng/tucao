@@ -1,6 +1,7 @@
 import { defineConfig } from 'umi';
 
 export default defineConfig({
+  links: [{ rel: 'icon', href: 'favicon.png' }],
   // layout: {},
   nodeModulesTransform: {
     type: 'none',

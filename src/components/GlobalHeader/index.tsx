@@ -13,7 +13,9 @@ const PageHeader = () => {
 
   return (
     <>
-      <div className={styles.logo} />
+      <div className={styles.logo}>
+        <img src={logo} width="126px" />
+      </div>
 
       <div style={{ float: 'right' }}>
         <Button onClick={toLogin} type="text" danger>

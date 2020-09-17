@@ -23,7 +23,9 @@ const BasicLayout: React.FC<IRouteComponentProps> = props => {
           <GlobalHeader />
         </Header>
         <Content className={styles.cont}> {props.children}</Content>
-        <Footer className={styles.footer}>Footer</Footer>
+        <Footer className={styles.footer}>
+          www.tucaoba.com by: dongaifeng
+        </Footer>
       </Layout>
     </div>
   );
