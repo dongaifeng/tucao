@@ -7,6 +7,8 @@ import {
   LikeOutlined,
   MessageOutlined,
 } from '@ant-design/icons';
+
+import LeftContent from './conponents/LeftContent';
 import styles from './index.less';
 
 import { StateType } from './model';
@@ -16,14 +18,16 @@ interface TStateType {
   loading: boolean;
 }
 interface PropsType {
-  dispatch: Dispatch<any>;
+  dispatch: Dispatch;
   list: ListItemDataType[];
+  fecommend: ListItemDataType[];
 }
 
 interface TPType {
   icon: React.ReactNode;
   text: string | number;
 }
+
 const IconText: FC<TPType> = ({ icon, text }) => {
   return (
     <span>
@@ -32,6 +36,7 @@ const IconText: FC<TPType> = ({ icon, text }) => {
     </span>
   );
 };
+
 class ContentList extends React.Component<PropsType, TStateType> {
   state: TStateType = {
     loading: false,
@@ -43,33 +48,55 @@ class ContentList extends React.Component<PropsType, TStateType> {
 
   fetchData = () => {
     const { dispatch } = this.props;
-
     dispatch({
       type: 'home/fetchData',
       payload: { size: 10, page: 1 },
     });
   };
 
-  componentDidMount() {
+  fetchRecommend = () => {
     const { dispatch } = this.props;
-
     dispatch({
-      type: 'home/fetchData',
-      payload: { size: 10, page: 1 },
+      type: 'home/fetchRecommend',
+      payload: { size: 7, page: 1 },
     });
+  };
+
+  renderRight = (recommend: ListItemDataType[]) => (
+    <div>
+      <Card
+        title="推荐阅读"
+        extra={<a href="#">更多</a>}
+        style={{
+          width: '100%',
+          marginTop: '30px',
+        }}
+      >
+        {recommend.map(item => (
+          <p className={styles.recommendItem} key={item.id}>
+            {item.subDescription}
+          </p>
+        ))}
+      </Card>
+    </div>
+  );
+
+  componentDidMount() {
+    this.fetchData();
+    this.fetchRecommend();
   }
 
   render() {
     const { loading } = this.state;
-    const { list } = this.props;
+    const { list, recommend } = this.props;
 
-    console.log(list);
+    console.log(this.props, '<---------------');
 
     return (
       <>
         <Row>
           <Col className={styles.contLeft} span={4}>
-            left
+            <LeftContent />
           </Col>
 
           <Col className={styles.content} span={16}>
@@ -92,31 +119,22 @@ class ContentList extends React.Component<PropsType, TStateType> {
                         />,
                         <IconText
                           icon={LikeOutlined}
-                          text={item.star}
+                          text={item.activeUser}
                           key="list-vertical-like-o"
                         />,
                         <IconText
                           icon={MessageOutlined}
-                          text={item.star}
+                          text={item.like}
                           key="list-vertical-message"
                         />,
                       ]}
-                      extra={
-                        <img
-                          width={272}
-                          alt="logo"
-                          src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                        />
-                      }
                     >
                       <List.Item.Meta
-                        avatar={
-                          <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                        }
+                        avatar={<Avatar src={item.avatar} />}
                         title={item.title}
-                        description="时间：2002-22-2-1"
+                        description="发布时间：2002-22-2-1"
                       />
-                      <span>文章内容</span>
+                      <span>{item.content}</span>
                     </List.Item>
                   )}
                 />
@@ -125,7 +143,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
           </Col>
 
           <Col className={styles.contRight} span={4}>
-            col
+            {this.renderRight(recommend)}
           </Col>
         </Row>
       </>
@@ -135,4 +153,5 @@ class ContentList extends React.Component<PropsType, TStateType> {
 
 export default connect(({ home }: { home: StateType }) => ({
   list: home.list,
+  recommend: home.recommend,
 }))(ContentList);

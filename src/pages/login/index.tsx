@@ -1,9 +1,14 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { connect, Dispatch } from 'umi';
 import styles from './index.less';
 import { Button } from 'antd';
+import LoginForm, { LoginContext } from './components/Login';
+
+const { LoginTab } = LoginForm;
 
 const Login = ({ status, dispatch, currentUser }) => {
+  const [type, setType] = useState<string>('account');
+
   useEffect(() => {
     dispatch({
       type: 'center/fetchCurrent',
@@ -12,10 +17,16 @@ const Login = ({ status, dispatch, currentUser }) => {
 
   return (
     <div>
-      <h1 className={styles.title}>Page login/index</h1>
-      <Button>按钮</Button>
-      {status}
-      <img alt="" src={currentUser.avatar} />
+      <LoginForm activeKey={type} onTabChange={setType}>
+        <LoginTab key="account" tab="账户密码登录">
+          这是一个tab
+        </LoginTab>
+        <LoginTab key="mobie" tab="账户密码登录">
+          这是一个tab1111111111111122222222222222222
+        </LoginTab>
+
+        <h1>登录</h1>
+      </LoginForm>
     </div>
   );
 };
