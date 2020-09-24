@@ -26,7 +26,7 @@ const LoginTab = props => {
     }
   }, []);
 
-  console.log(props, context, '<-----props');
+  // console.log(props, context, '<-----props');
 
   return <TabPane {...props}>{props.active && children}</TabPane>;
 };
