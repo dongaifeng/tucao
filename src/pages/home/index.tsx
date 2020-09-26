@@ -93,7 +93,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
     console.log(this.props, '<---------------');
 
     return (
-      <>
+      <div>
         <Row>
           <Col className={styles.contLeft} span={4}>
             <LeftContent />
@@ -146,7 +146,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
             {this.renderRight(recommend)}
           </Col>
         </Row>
-      </>
+      </div>
     );
   }
 }
