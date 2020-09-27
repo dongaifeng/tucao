@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
-import { history, ConnectProps, connect } from 'umi';
+import { history, ConnectProps, connect, Link } from 'umi';
 import logo from '@/assets/logo.png';
 import styles from './index.less';
 
@@ -22,7 +22,7 @@ const PageHeader = () => {
           登录
         </Button>
         <Button type="text" danger>
-          注册
+          <Link to="/user/register">注册</Link>
         </Button>
       </div>
 
