@@ -12,9 +12,7 @@ const User: React.FC<IRouteComponentProps> = props => {
             <img alt="logo" className={styles.logo} src={logo} />
           </Link>
         </div>
-        <div className={styles.desc}>
-          Ant Design 是西湖区最具影响力的 Web 设计规范
-        </div>
+        <div className={styles.desc}>吐槽吧 留下你的吐槽 还你美好心情</div>
       </div>
       {props.children}
     </div>
