@@ -23,6 +23,11 @@ export default defineConfig({
       routes: [
         { path: '/user', redirect: '/user/login' },
         { exact: true, path: '/user/login', component: '@/pages/login/index' },
+        {
+          exact: true,
+          path: '/user/register',
+          component: '@/pages/register/index',
+        },
       ],
     },
   ],
