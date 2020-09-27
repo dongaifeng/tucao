@@ -1,5 +1,6 @@
 import { history, Reducer, Effect } from 'umi';
 import { register } from '@/service/user';
+
 export interface StateType {
   status?: 'ok' | 'error';
   type?: string;
@@ -29,9 +30,8 @@ const Model: UserModelType = {
   effects: {
     *register({ payload }, { put, call }) {
       const res = yield call(register, payload);
-      console.log(payload, res);
-
-      put({
+      console.log(res, '<----res');
+      yield put({
         type: 'saveRegister',
         payload: res || {},
       });
@@ -39,7 +39,13 @@ const Model: UserModelType = {
   },
 
   reducers: {
-    saveRegister(state: StateType, { payload }) {},
+    saveRegister(state: StateType, { payload }) {
+      console.log(payload);
+      return {
+        ...state,
+        userInfo: payload,
+      };
+    },
   },
 };
 

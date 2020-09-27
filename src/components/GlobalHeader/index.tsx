@@ -14,19 +14,13 @@ const menu = (
       <Link to="/setting">个人设置</Link>
     </Menu.Item>
     <Menu.Item>
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="http://www.alipay.com/"
-      >
-        退出登录
-      </a>
+      <Link to="/user/login">退出登录</Link>
     </Menu.Item>
   </Menu>
 );
 
 const PageHeader: FC<PropsType> = () => {
-  const [login, setLogin] = useState<boolean>(false);
+  const [login, setLogin] = useState<boolean>(true);
   const toLogin = () => {
     history.push('/user/login');
   };
@@ -48,7 +42,7 @@ const PageHeader: FC<PropsType> = () => {
               登录
             </Button>
             <Button type="text" danger>
-              注册
+              <Link to="/user/register">注册</Link>
             </Button>
           </div>
         ) : (

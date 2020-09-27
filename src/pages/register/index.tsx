@@ -6,6 +6,8 @@ import styles from './index.less';
 let timer: number | undefined;
 interface PageType {
   dispatch: Dispatch;
+  status: any;
+  userInfo: {};
 }
 
 interface ValuesType {
@@ -21,7 +23,7 @@ const Captcha = ({
   num,
 }: {
   getCaptCha: () => void;
-  num: number;
+  num: number | undefined;
 }) => (
   <Row gutter={8}>
     <Col span={16}>
@@ -42,7 +44,7 @@ const Captcha = ({
   </Row>
 );
 
-const Register: FC<PageType> = ({ dispatch }) => {
+const Register: FC<PageType> = ({ dispatch, status, userInfo }) => {
   const [form] = Form.useForm();
   const [num, setNum] = useState<number | undefined>();
 
@@ -52,9 +54,10 @@ const Register: FC<PageType> = ({ dispatch }) => {
 
   const onFinish = (values: ValuesType) => {
     dispatch({
-      type: 'register',
+      type: 'user/register',
       payload: values,
     });
+
     console.log('Success:', values);
   };
 
@@ -140,7 +143,14 @@ const Register: FC<PageType> = ({ dispatch }) => {
   );
 };
 
+type P = {
+  user: any;
+};
+
 export default connect(
   //mapStatetoProps
-  () => ({}),
+  ({ user }: P) => ({
+    status: user.status,
+    userInfo: user.userInfo,
+  }),
 )(Register);

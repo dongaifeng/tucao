@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IRouteComponentProps, Link } from 'umi';
 import logo from '@/assets/logo.png';
 import styles from './index.less';

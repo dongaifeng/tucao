@@ -124,10 +124,10 @@ const Login: FC<PropsType> = ({ dispatch }) => {
 };
 
 type P = {
-  login: any;
+  user: any;
   center: any;
 };
-export default connect(({ login, center }: P) => ({
-  status: login.status,
+export default connect(({ user, center }: P) => ({
+  status: user.status,
   currentUser: center.currentUser,
 }))(Login);
