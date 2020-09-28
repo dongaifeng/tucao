@@ -1,5 +1,5 @@
 import { history, Reducer, Effect } from 'umi';
-import { register } from '@/service/user';
+import { register, login } from '@/service/user';
 
 import { CurrentUser } from './gloal.d';
 
@@ -15,9 +15,11 @@ export interface UserModelType {
   state: StateType;
   effects: {
     register: Effect;
+    login: Effect;
   };
   reducers: {
     saveRegister: Reducer;
+    saveLogin: Reducer;
   };
 }
 
@@ -37,10 +39,26 @@ const Model: UserModelType = {
         payload: res || {},
       });
     },
+
+    *login({ payload }, { put, call }) {
+      const res = yield call(login, payload);
+
+      yield put({
+        type: 'saveLogin',
+        payload: res || {},
+      });
+    },
   },
 
   reducers: {
     saveRegister(state: StateType, { payload }) {
+      return {
+        ...state,
+        status: payload.status,
+      };
+    },
+
+    saveLogin(state: StateType, { payload }) {
       return {
         ...state,
         status: payload.status,

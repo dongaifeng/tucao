@@ -35,6 +35,10 @@ const Login: FC<PropsType> = ({ dispatch }) => {
 
   const handleSubmit = (values: LoginData) => {
     console.log(values);
+    dispatch({
+      type: 'user/login',
+      payload: values,
+    });
   };
 
   return (

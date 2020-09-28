@@ -6,3 +6,9 @@ export async function register(data: {}) {
     data,
   });
 }
+export async function login(data: {}) {
+  return request('/api/login', {
+    method: 'POST',
+    data,
+  });
+}

@@ -9,4 +9,5 @@ function ddd(req: Request, res: Response) {
 
 export default {
   'POST  /api/register': ddd,
+  'POST  /api/login': ddd,
 };
