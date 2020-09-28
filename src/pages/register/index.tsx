@@ -1,13 +1,15 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Link, Dispatch, connect } from 'umi';
-import { Form, Input, Button, Row, Col } from 'antd';
+import { Link, Dispatch, connect, history } from 'umi';
+import { Form, Input, Button, Row, Col, message } from 'antd';
 import styles from './index.less';
+import { StateType } from '../../models/user';
+import { CurrentUser } from '@/models/gloal.d';
 
 let timer: number | undefined;
 interface PageType {
   dispatch: Dispatch;
-  status: any;
-  userInfo: {};
+  status: string | undefined;
+  userInfo: CurrentUser | null;
 }
 
 interface ValuesType {
@@ -51,6 +53,18 @@ const Register: FC<PageType> = ({ dispatch, status, userInfo }) => {
   useEffect(() => {
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (status === 'ok') {
+      message.success('注册成功！');
+      history.push({
+        pathname: '/user/login',
+        query: {
+          a: 'b',
+        },
+      });
+    }
+  }, [status]);
 
   const onFinish = (values: ValuesType) => {
     dispatch({
@@ -144,7 +158,7 @@ const Register: FC<PageType> = ({ dispatch, status, userInfo }) => {
 };
 
 type P = {
-  user: any;
+  user: StateType;
 };
 
 export default connect(

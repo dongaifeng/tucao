@@ -17,7 +17,7 @@ const BasicLayout: React.FC<IRouteComponentProps> = props => {
   }
 
   return (
-    <div>
+    <div className={styles.indexLayout}>
       <Layout>
         <Header className={styles.pageHeader}>
           <GlobalHeader />
