@@ -28,6 +28,9 @@ export default defineConfig({
       routes: [
         { exact: true, path: '/', component: '@/pages/home/index' },
         { exact: true, path: '/setting', component: '@/pages/setting/index' },
+        { exact: true, path: '/follow', component: '@/pages/follow/index' },
+        { exact: true, path: '/fans', component: '@/pages/follow/index' },
+        { exact: true, path: '/collect', component: '@/pages/collect/index' },
         { component: '404' },
       ],
     },

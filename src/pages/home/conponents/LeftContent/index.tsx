@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
 
-import { connect, Dispatch } from 'umi';
+import { connect, Dispatch, history } from 'umi';
 
 import { Divider, Menu } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
@@ -9,12 +9,12 @@ import { User } from '../../data.d';
 import { StateType } from '../../model';
 
 const menu: { [key: string]: string } = {
-  base: '我的关注',
+  follow: '我的关注',
   fans: '我的粉丝',
-  sh: '我的收藏',
+  collect: '我的收藏',
 };
 
-type SelectType = 'base' | 'fans' | 'sh';
+type SelectType = 'follow' | 'fans' | 'collect';
 interface PropsType {
   currentUser: Partial<User>;
   dispatch: Dispatch;
@@ -22,8 +22,9 @@ interface PropsType {
 
 const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
   const { name, address, avatar, signature } = currentUser;
+
   const selectKey = (key: SelectType) => {
-    console.log(key);
+    history.push(`/${key}`);
   };
 
   useEffect(() => {
