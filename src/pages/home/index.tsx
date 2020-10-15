@@ -16,6 +16,7 @@ import { ListItemDataType } from './data.d';
 
 interface TStateType {
   loading: boolean;
+  key: string;
 }
 interface PropsType {
   dispatch: Dispatch;
@@ -24,7 +25,7 @@ interface PropsType {
 }
 
 interface TPType {
-  icon: React.ReactNode;
+  icon: React.ReactNode | any;
   text: string | number;
 }
 
@@ -37,9 +38,21 @@ const IconText: FC<TPType> = ({ icon, text }) => {
   );
 };
 
+const tabList = [
+  {
+    key: 'tab1',
+    tab: '广场',
+  },
+  {
+    key: 'tab2',
+    tab: '关注',
+  },
+];
+
 class ContentList extends React.Component<PropsType, TStateType> {
   state: TStateType = {
     loading: false,
+    key: 'tab1',
   };
 
   loadMore = () => {
@@ -81,13 +94,18 @@ class ContentList extends React.Component<PropsType, TStateType> {
     </div>
   );
 
+  onTabChange = (key: string) => {
+    console.log(key);
+    this.setState({ key: key });
+  };
+
   componentDidMount() {
     this.fetchData();
     this.fetchRecommend();
   }
 
   render() {
-    const { loading } = this.state;
+    const { loading, key } = this.state;
     const { list, recommend } = this.props;
 
     console.log(this.props, '<---------------');
@@ -101,7 +119,15 @@ class ContentList extends React.Component<PropsType, TStateType> {
 
           <Col className={styles.content} span={16}>
             <div style={{ width: '100%', padding: 10 }}>
-              <Card style={{ width: '100%', marginTop: 16 }} loading={loading}>
+              <Card
+                tabList={tabList}
+                activeTabKey={key}
+                onTabChange={key => {
+                  this.onTabChange(key, 'key');
+                }}
+                style={{ width: '100%', marginTop: 16 }}
+                loading={loading}
+              >
                 <List
                   itemLayout="vertical"
                   // loadMore={this.loadMore}
