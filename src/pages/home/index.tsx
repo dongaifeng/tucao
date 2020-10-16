@@ -21,7 +21,7 @@ interface TStateType {
 interface PropsType {
   dispatch: Dispatch;
   list: ListItemDataType[];
-  fecommend: ListItemDataType[];
+  recommend: ListItemDataType[];
 }
 
 interface TPType {
@@ -59,11 +59,11 @@ class ContentList extends React.Component<PropsType, TStateType> {
     return <div>jiaz</div>;
   };
 
-  fetchData = () => {
+  fetchData = (size: number) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'home/fetchData',
-      payload: { size: 10, page: 1 },
+      payload: { size, page: 1 },
     });
   };
 
@@ -97,10 +97,12 @@ class ContentList extends React.Component<PropsType, TStateType> {
   onTabChange = (key: string) => {
     console.log(key);
     this.setState({ key: key });
+    const a = key === 'tab2' ? 1 : 10;
+    this.fetchData(a);
   };
 
   componentDidMount() {
-    this.fetchData();
+    this.fetchData(10);
     this.fetchRecommend();
   }
 
@@ -123,7 +125,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
                 tabList={tabList}
                 activeTabKey={key}
                 onTabChange={key => {
-                  this.onTabChange(key, 'key');
+                  this.onTabChange(key);
                 }}
                 style={{ width: '100%', marginTop: 16 }}
                 loading={loading}
@@ -131,7 +133,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
                 <List
                   itemLayout="vertical"
                   // loadMore={this.loadMore}
-                  header={<div>头部</div>}
+                  // header={<div>头部</div>}
                   footer={<div>底部</div>}
                   dataSource={list}
                   renderItem={item => (
