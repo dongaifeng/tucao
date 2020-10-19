@@ -10,7 +10,7 @@ interface IProps {
   follows: FollowType[];
 }
 
-const rederTab = () => (
+export const rederTab = () => (
   <div>
     <Button type="link">首页</Button>|<Button type="link">我的粉丝</Button>|
     <Button type="link">我的收藏</Button>

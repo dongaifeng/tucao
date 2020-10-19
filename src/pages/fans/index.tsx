@@ -1,25 +1,41 @@
-import React from 'react';
-import { Card, Avatar } from 'antd';
+import React, { FC } from 'react';
+import { Card, Avatar, Tooltip } from 'antd';
+import { Link, connect } from 'umi';
+import { UserOutlined } from '@ant-design/icons';
 import styles from './fans.less';
+import { FollowType } from '../follow/data.d';
+import { StateType } from '../follow/model';
 
-const gridStyle: React.CSSProperties = {
-  width: '50px ',
-  textAlign: 'center',
-};
+import { rederTab } from '../follow';
 
-export default () => {
+interface IProps {
+  follows: FollowType[];
+}
+
+const Fans: FC<IProps> = ({ follows }) => {
   return (
-    <div>
-      <Card title="Card Title">
-        <Card.Grid style={gridStyle}>
-          <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-          <div>董爱锋</div>
-        </Card.Grid>
-        <Card.Grid style={gridStyle}>Content</Card.Grid>
-        <Card.Grid style={gridStyle}>Content</Card.Grid>
-        <Card.Grid style={gridStyle}>Content</Card.Grid>
-        <Card.Grid style={gridStyle}>Content</Card.Grid>
+    <div className={styles.box}>
+      <Card title={rederTab()} bordered={false}>
+        {follows &&
+          follows.map(item => (
+            <div className={styles.item}>
+              <Link to="">
+                <Tooltip title={item.name} placement="top">
+                  <Avatar icon={<UserOutlined />} size={60} src={item.avatar} />
+                </Tooltip>
+                <div className={styles.name}>{item.name}</div>
+              </Link>
+            </div>
+          ))}
       </Card>
     </div>
   );
 };
+
+type P = {
+  follow: StateType;
+};
+
+export default connect(({ follow }: P) => ({
+  follows: follow.follows,
+}))(Fans);
