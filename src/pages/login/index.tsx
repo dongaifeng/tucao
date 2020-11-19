@@ -13,7 +13,7 @@ import styles from './index.less';
 // createContext
 
 export interface LoginData {
-  userName: string;
+  email: string;
   password: string;
   mobile: string;
   captcha: string;
@@ -46,19 +46,19 @@ const Login: FC<PropsType> = ({ dispatch }) => {
       <LoginForm activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
         <LoginTab key="account" tab="账户密码登录">
           <UserName
-            name="userName"
-            placeholder="用户名: admin or user"
+            name="email"
+            placeholder="请输入邮箱"
             rules={[
               {
                 required: true,
-                message: '请输入用户名!',
+                message: '请输入注册的邮箱',
               },
             ]}
           />
 
           <Password
             name="password"
-            placeholder="密码: ant.design"
+            placeholder="请输入密码"
             rules={[
               {
                 required: true,

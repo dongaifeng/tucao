@@ -1,13 +1,14 @@
 import { history, Reducer, Effect } from 'umi';
-import { register, login } from '@/service/user';
+import { register, login, getSvgCode } from '@/service/user';
 
 import { CurrentUser } from './gloal.d';
 
 export interface StateType {
-  status?: 'ok' | 'error';
+  status?: 'ok' | 'error' | undefined;
   type?: string;
   currentAuthority?: 'user' | 'guest' | 'admin';
   userInfo?: CurrentUser | null;
+  svgCode?: String | undefined;
 }
 
 export interface UserModelType {
@@ -16,10 +17,12 @@ export interface UserModelType {
   effects: {
     register: Effect;
     login: Effect;
+    getSvgCode: Effect;
   };
   reducers: {
     saveRegister: Reducer;
     saveLogin: Reducer;
+    saveSvgCode: Reducer;
   };
 }
 
@@ -29,10 +32,12 @@ const Model: UserModelType = {
   state: {
     status: undefined,
     userInfo: null,
+    svgCode: undefined,
   },
 
   effects: {
     *register({ payload }, { put, call }) {
+      alert();
       const res = yield call(register, payload);
       yield put({
         type: 'saveRegister',
@@ -45,6 +50,15 @@ const Model: UserModelType = {
 
       yield put({
         type: 'saveLogin',
+        payload: res || {},
+      });
+    },
+
+    *getSvgCode({}, { put, call }) {
+      const res = yield call(getSvgCode);
+
+      yield put({
+        type: 'saveSvgCode',
         payload: res || {},
       });
     },
@@ -62,6 +76,13 @@ const Model: UserModelType = {
       return {
         ...state,
         status: payload.status,
+      };
+    },
+
+    saveSvgCode(state: StateType, { payload }) {
+      return {
+        ...state,
+        svgCode: payload,
       };
     },
   },

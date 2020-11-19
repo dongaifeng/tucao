@@ -5,32 +5,37 @@ import styles from './index.less';
 import { StateType } from '../../models/user';
 import { CurrentUser } from '@/models/gloal.d';
 
+import { sendCode } from '@/service/user';
+
 let timer: number | undefined;
 interface PageType {
   dispatch: Dispatch;
   status: string | undefined;
-  userInfo: CurrentUser | null;
+  userInfo?: CurrentUser | null;
 }
 
 interface ValuesType {
   password: string;
   username: string;
-  captcha: string;
+  emailCode: string;
   email: string;
-  passwordAgain: string;
+  passwordAgain?: string;
 }
 
-const Captcha = ({
-  getCaptCha,
+const EmailCaptcha = ({
+  getEmailCaptcha,
   num,
 }: {
-  getCaptCha: () => void;
+  getEmailCaptcha: () => void;
   num: number | undefined;
 }) => (
   <Row gutter={8}>
     <Col span={16}>
-      <Form.Item name="captcha">
-        <Input placeholder="验证码" />
+      <Form.Item
+        name="emailCode"
+        rules={[{ required: true, message: '请输入邮箱的验证码' }]}
+      >
+        <Input placeholder="请输入邮箱的验证码" />
       </Form.Item>
     </Col>
     <Col span={8}>
@@ -38,10 +43,37 @@ const Captcha = ({
         disabled={!!num}
         type="primary"
         className={styles.getCaptcha}
-        onClick={getCaptCha}
+        onClick={getEmailCaptcha}
       >
-        {num ? `${num} s` : '获取验证码'}
+        {num ? `${num} s` : '验证邮箱'}
       </Button>
+    </Col>
+  </Row>
+);
+
+const SvgCode = ({
+  refreshSvg,
+  flag,
+}: {
+  refreshSvg: () => void;
+  flag: Number;
+}) => (
+  <Row gutter={8}>
+    <Col span={14}>
+      <Form.Item
+        name="svgCode"
+        rules={[{ required: true, message: '请输入验证码' }]}
+      >
+        <Input placeholder="请输入图片中的验证码" />
+      </Form.Item>
+    </Col>
+    <Col span={10}>
+      <img
+        onClick={refreshSvg}
+        className={styles.svgImg}
+        src={'/api/captcha/?code=' + flag}
+        alt="点击刷新图片"
+      />
     </Col>
   </Row>
 );
@@ -49,22 +81,32 @@ const Captcha = ({
 const Register: FC<PageType> = ({ dispatch, status, userInfo }) => {
   const [form] = Form.useForm();
   const [num, setNum] = useState<number | undefined>();
+  const [flag, setFlag] = useState<number>(0);
 
   useEffect(() => {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    if (status === 'ok') {
-      message.success('注册成功！');
-      history.push({
-        pathname: '/user/login',
-        query: {
-          a: 'b',
-        },
-      });
-    }
-  }, [status]);
+  // useEffect(() => {
+  //   if (status === 'ok') {
+  //     message.success('注册成功！');
+  //     history.push({
+  //       pathname: '/user/login',
+  //       query: {
+  //         a: 'b',
+  //       },
+  //     });
+  //   }
+
+  //   return () => dispatch({
+  //     type: 'user/saveRegister',
+  //     payload: undefined,
+  //   })
+  // }, [status]);
+
+  const refreshSvg = () => {
+    setFlag(Math.random());
+  };
 
   const onFinish = (values: ValuesType) => {
     dispatch({
@@ -75,11 +117,12 @@ const Register: FC<PageType> = ({ dispatch, status, userInfo }) => {
     console.log('Success:', values);
   };
 
-  const onFinishFailed = errorInfo => {
+  const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
 
-  const getCaptCha = () => {
+  // 邮箱验证码
+  const getEmailCaptcha = () => {
     let a = 60;
     timer = window.setInterval(() => {
       setNum(--a);
@@ -88,6 +131,10 @@ const Register: FC<PageType> = ({ dispatch, status, userInfo }) => {
         clearInterval(timer);
       }
     }, 1000);
+    const email = form.getFieldValue('email'); // '864857106@qq.com'
+    sendCode({ email }).then(res => {
+      message.success(res.message);
+    });
   };
 
   const checkPwd = (rule: [], value: string) => {
@@ -124,6 +171,8 @@ const Register: FC<PageType> = ({ dispatch, status, userInfo }) => {
 
         <Form.Item
           name="passwordAgain"
+          dependencies={['password']}
+          hasFeedback
           rules={[
             { required: true, message: '请再次输入密码' },
             { validator: checkPwd },
@@ -136,13 +185,15 @@ const Register: FC<PageType> = ({ dispatch, status, userInfo }) => {
           name="email"
           rules={[
             { required: true, message: '请输入合法邮箱' },
-            // { type: 'email', message: '邮箱不合法'}
+            { type: 'email', message: '邮箱不合法' },
           ]}
         >
-          <Input placeholder="请输入合法邮箱" />
+          <Input placeholder="请输入邮箱" />
         </Form.Item>
 
-        <Captcha num={num} getCaptCha={getCaptCha} />
+        <EmailCaptcha num={num} getEmailCaptcha={getEmailCaptcha} />
+
+        <SvgCode flag={flag} refreshSvg={refreshSvg} />
 
         <Form.Item>
           <Button style={{ width: '100%' }} type="primary" htmlType="submit">

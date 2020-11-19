@@ -2,6 +2,22 @@ import { defineConfig } from 'umi';
 
 export default defineConfig({
   links: [{ rel: 'icon', href: 'favicon.png' }],
+
+  // 配置前端服务项， 低于.env文件优先级
+  // devServer: {
+  //   port: 7777,
+  // },
+
+  mock: false,
+
+  proxy: {
+    '/api': {
+      target: 'http://localhost:7000/',
+      changeOrigin: true,
+      pathRewrite: { '^/api': '/api' },
+    },
+  },
+
   // layout: {},
   nodeModulesTransform: {
     type: 'none',
