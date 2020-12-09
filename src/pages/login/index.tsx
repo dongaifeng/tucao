@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
-import { connect, Dispatch, Link } from 'umi';
-import { Checkbox } from 'antd';
+import { connect, Dispatch, Link, history } from 'umi';
+import { Checkbox, message } from 'antd';
 import { WechatOutlined } from '@ant-design/icons';
 
 import LoginForm, { LoginContext } from './components/Login';
@@ -27,17 +27,24 @@ const Login: FC<PropsType> = ({ dispatch }) => {
   const [type, setType] = useState<string>('account');
   const [autoLogin, setAutoLogin] = useState<boolean>(true);
 
-  useEffect(() => {
-    dispatch({
-      type: 'center/fetchCurrent',
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'center/fetchCurrent',
+  //   });
+  // }, []);
 
   const handleSubmit = (values: LoginData) => {
     console.log(values);
     dispatch({
       type: 'user/login',
       payload: values,
+      callback: (res: { token: string; username: string }) => {
+        message.success('亲爱的用户' + res.username + '，恭喜您登录成功！');
+        localStorage.setItem('x-auth-token', res.token);
+        setTimeout(() => {
+          history.push({ pathname: '/' });
+        }, 1000);
+      },
     });
   };
 
@@ -67,6 +74,7 @@ const Login: FC<PropsType> = ({ dispatch }) => {
             ]}
           />
         </LoginTab>
+
         <LoginTab key="mobie" tab="手机号登录">
           <Mobile
             name="mobile"

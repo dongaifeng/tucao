@@ -1,7 +1,21 @@
-
 .normal {
 }
 
 .title {
   background: rgb(121, 242, 157);
+}
+
+.tagsTitle,
+.teamTitle {
+  margin-bottom: 12px;
+  color: @heading-color;
+  font-weight: 500;
+}
+
+.tags {
+  :global {
+    .ant-tag {
+      margin-bottom: 8px;
+    }
+  }
 }

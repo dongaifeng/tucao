@@ -10,10 +10,25 @@ interface IProps {
   follows: FollowType[];
 }
 
+const goPage = () => {};
+
 export const rederTab = () => (
   <div>
-    <Button type="link">首页</Button>|<Button type="link">我的粉丝</Button>|
-    <Button type="link">我的收藏</Button>
+    <Button type="link" onClick={() => history.push('/')}>
+      首页
+    </Button>
+    |
+    <Button type="link" onClick={() => history.push('/follow')}>
+      我的关注
+    </Button>
+    |
+    <Button type="link" onClick={() => history.push('/fans')}>
+      我的粉丝
+    </Button>
+    |
+    <Button type="link" onClick={() => history.push('/collect')}>
+      我的收藏
+    </Button>
   </div>
 );
 

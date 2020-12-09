@@ -9,14 +9,14 @@ export interface ListItemDataType {
   logo: string;
   href: string;
   body?: any;
-  updatedAt: number;
-  createdAt: number;
+  updatedAt: string;
+  createdAt: string;
   subDescription: string;
   description: string;
   activeUser: number;
   newUser: number;
   star: number;
-  like: number;
+  likes: number;
   message: number;
   content: string;
   members: Member[];
@@ -28,7 +28,7 @@ export interface User {
   userid: string;
   notice: NoticeType[];
   email: string;
-  signature: string;
+  introduce: string;
   title: string;
   group: string;
   tags: TagType[];

@@ -35,6 +35,7 @@ const Model: ModelType = {
         payload: data,
       });
     },
+
     *getList({ payload }, { call, put }) {
       const { data } = yield call(queryList, { size: payload });
       yield put({

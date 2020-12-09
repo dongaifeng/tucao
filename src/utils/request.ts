@@ -2,6 +2,7 @@
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
+
 import { extend } from 'umi-request';
 import { notification } from 'antd';
 
@@ -26,6 +27,7 @@ const codeMessage: { [propName: number]: string } = {
 /**
  * 异常处理程序
  */
+
 const errorHandler = (error: { response: Response }) => {
   const { response } = error;
 
@@ -48,13 +50,12 @@ const request = extend({
 
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use((url, options) => {
-  debugger;
   let c_token = localStorage.getItem('x-auth-token');
   if (c_token) {
     const headers = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'x-auth-token': c_token,
+      Authorization: 'Bearer ' + c_token,
     };
     return {
       url: url,
@@ -64,7 +65,7 @@ request.interceptors.request.use((url, options) => {
     const headers = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'x-auth-token': c_token,
+      Authorization: 'Bearer ' + c_token,
     };
     return {
       url: url,
@@ -75,10 +76,10 @@ request.interceptors.request.use((url, options) => {
 
 // response拦截器, 处理response
 request.interceptors.response.use((response, options) => {
-  let token = response.headers.get('x-auth-token');
-  if (token) {
-    localStorage.setItem('x-auth-token', token);
-  }
+  // let token = response.headers.get('x-auth-token');
+  // if (token) {
+  //   localStorage.setItem('x-auth-token', token);
+  // }
   return response;
 });
 

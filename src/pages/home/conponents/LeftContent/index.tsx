@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
 
-import { connect, Dispatch, history } from 'umi';
+import { connect, Dispatch, history, Link } from 'umi';
 
 import { Divider, Menu } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
@@ -21,7 +21,7 @@ interface PropsType {
 }
 
 const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
-  const { name, address, avatar, signature } = currentUser;
+  const { name, address, avatar, introduce } = currentUser;
 
   const selectKey = (key: SelectType) => {
     history.push(`/${key}`);
@@ -35,9 +35,11 @@ const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
 
   return (
     <div className={styles.box}>
-      <img src={avatar} alt="avatar" />
+      <Link to="/setting">
+        <img src={avatar} alt="avatar" />
+      </Link>
       <div className={styles.name}>{name}</div>
-      <div className={styles.sign}>{signature}</div>
+      <div className={styles.sign}>{introduce}</div>
 
       <p>
         <HomeOutlined

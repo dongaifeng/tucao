@@ -34,17 +34,25 @@ export type LoginItemsType = {
 };
 
 const LoginItem: FC<ItemType> = props => {
-  const { rules, type, subProp, tabUtil, ...restProps } = props;
+  const {
+    rules,
+    type,
+    name,
+    subProp,
+    placeholder,
+    tabUtil,
+    ...restProps
+  } = props;
 
-  console.log(props);
+  console.log(props, 'bi-----------------');
 
   if (type === 'Captcha') {
     return (
       <Form.Item>
         <Row gutter={8}>
           <Col span={16}>
-            <Form.Item name={type} rules={rules}>
-              <Input {...subProp} />
+            <Form.Item name={name} rules={rules}>
+              <Input {...subProp} placeholder={placeholder} />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -58,8 +66,8 @@ const LoginItem: FC<ItemType> = props => {
   }
 
   return (
-    <Form.Item name={type} rules={rules}>
-      <Input {...subProp} />
+    <Form.Item name={name} rules={rules}>
+      <Input {...subProp} placeholder={placeholder} />
     </Form.Item>
   );
 };
@@ -70,6 +78,7 @@ Object.keys(itemMap).forEach(key => {
   const item = itemMap[key];
 
   LoginItems[key] = (props: ItemType) => {
+    console.log(props, item, '<---------------ai');
     return (
       <LoginContext.Consumer>
         {context => (

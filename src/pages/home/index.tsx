@@ -1,7 +1,8 @@
 import React, { FC } from 'react';
 import { connect, Dispatch } from 'umi';
-import { Row, Col, Card, List, Avatar } from 'antd';
+import { Row, Col, Card, List, Avatar, Input } from 'antd';
 import {
+  UploadOutlined,
   LoadingOutlined,
   StarOutlined,
   LikeOutlined,
@@ -17,6 +18,7 @@ import { ListItemDataType } from './data.d';
 interface TStateType {
   loading: boolean;
   key: string;
+  pubVal: undefined | string;
 }
 interface PropsType {
   dispatch: Dispatch;
@@ -53,6 +55,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
   state: TStateType = {
     loading: false,
     key: 'tab1',
+    pubVal: undefined,
   };
 
   loadMore = () => {
@@ -87,7 +90,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
       >
         {recommend.map(item => (
           <p className={styles.recommendItem} key={item.id}>
-            {item.subDescription}
+            {item.content}
           </p>
         ))}
       </Card>
@@ -99,6 +102,21 @@ class ContentList extends React.Component<PropsType, TStateType> {
     this.setState({ key: key });
     const a = key === 'tab2' ? 1 : 10;
     this.fetchData(a);
+  };
+
+  publish = () => {
+    console.log(this.state.pubVal);
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'home/publish',
+      payload: { content: this.state.pubVal },
+    });
+  };
+
+  pubChange = (value: string) => {
+    this.setState({
+      pubVal: value,
+    });
   };
 
   componentDidMount() {
@@ -120,6 +138,24 @@ class ContentList extends React.Component<PropsType, TStateType> {
           </Col>
 
           <Col className={styles.content} span={16}>
+            <div style={{ margin: '10px' }}>
+              <Row>
+                <Col span={22}>
+                  <Input.TextArea
+                    style={{ resize: 'none' }}
+                    onChange={e => this.pubChange(e.target.value)}
+                    // value={pubVal}
+                    placeholder="发表心情"
+                    autoSize={{ minRows: 3, maxRows: 3 }}
+                  />
+                </Col>
+                <Col span={2}>
+                  <div onClick={this.publish} className={styles.publish}>
+                    <UploadOutlined />
+                  </div>
+                </Col>
+              </Row>
+            </div>
             <div style={{ width: '100%', padding: 10 }}>
               <Card
                 tabList={tabList}
@@ -127,7 +163,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
                 onTabChange={key => {
                   this.onTabChange(key);
                 }}
-                style={{ width: '100%', marginTop: 16 }}
+                style={{ width: '100%' }}
                 loading={loading}
               >
                 <List
@@ -152,7 +188,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
                         />,
                         <IconText
                           icon={MessageOutlined}
-                          text={item.like}
+                          text={item.likes}
                           key="list-vertical-message"
                         />,
                       ]}
@@ -160,7 +196,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
                       <List.Item.Meta
                         avatar={<Avatar src={item.avatar} />}
                         title={item.title}
-                        description="发布时间：2002-22-2-1"
+                        description={'发布时间：' + item.updatedAt}
                       />
                       <span>{item.content}</span>
                     </List.Item>

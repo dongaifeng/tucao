@@ -28,11 +28,11 @@ const Model: ModelType = {
   },
   effects: {
     *fetchFollows({ payload }, { call, put }) {
-      const res = yield call(queryFollows, payload);
+      const { data } = yield call(queryFollows, payload);
 
       yield put({
         type: 'saveFollows',
-        payload: Array.isArray(res) ? res : [],
+        payload: Array.isArray(data) ? data : [],
       });
     },
   },

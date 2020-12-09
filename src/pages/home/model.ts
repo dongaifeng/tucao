@@ -1,6 +1,7 @@
 import { Effect, Reducer } from 'umi';
 import { ListItemDataType, User } from './data.d';
-import { queryList, queryUser } from './service';
+import { queryList, queryUser, publish } from './service';
+import { message } from 'antd';
 
 export interface StateType {
   list: ListItemDataType[];
@@ -12,6 +13,7 @@ interface EffectsType {
   fetchData: Effect;
   fetchUser: Effect;
   fetchRecommend: Effect;
+  publish: Effect;
 }
 
 interface ReducersType {
@@ -37,11 +39,11 @@ const Model: ModelType = {
   },
   effects: {
     *fetchData({ payload }, { call, put }) {
-      const res = yield call(queryList, payload);
+      const { data } = yield call(queryList, payload);
 
       yield put({
         type: 'queryList',
-        payload: Array.isArray(res) ? res : [],
+        payload: Array.isArray(data) ? data : [],
       });
     },
 
@@ -49,17 +51,26 @@ const Model: ModelType = {
       const res = yield call(queryUser);
       yield put({
         type: 'saveUser',
-        payload: res || {},
+        payload: res.data || {},
       });
     },
 
     *fetchRecommend({ payload }, { call, put }) {
-      const res = yield call(queryList, payload);
+      const { data } = yield call(queryList, payload);
 
       yield put({
         type: 'saveRecommend',
-        payload: Array.isArray(res) ? res : [],
+        payload: Array.isArray(data) ? data : [],
       });
+    },
+
+    *publish({ payload }, { call, select }) {
+      const currentUser = yield select((state: any) => state.home.currentUser);
+      const res = yield call(publish, { ...payload, ...currentUser });
+      console.log(res, '<------');
+      if (res.code === 2000) {
+        message.success('发表成功！');
+      }
     },
   },
 

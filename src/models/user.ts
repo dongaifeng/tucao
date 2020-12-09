@@ -37,7 +37,6 @@ const Model: UserModelType = {
 
   effects: {
     *register({ payload }, { put, call }) {
-      alert();
       const res = yield call(register, payload);
       yield put({
         type: 'saveRegister',
@@ -45,13 +44,19 @@ const Model: UserModelType = {
       });
     },
 
-    *login({ payload }, { put, call }) {
+    *login({ payload, callback }, { put, call }) {
       const res = yield call(login, payload);
 
-      yield put({
-        type: 'saveLogin',
-        payload: res || {},
-      });
+      console.log(res);
+
+      if (res.code === 2000) {
+        if (callback && typeof callback === 'function') callback(res.data);
+
+        yield put({
+          type: 'saveLogin',
+          payload: res || {},
+        });
+      }
     },
 
     *getSvgCode({}, { put, call }) {
