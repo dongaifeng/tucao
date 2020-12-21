@@ -1,6 +1,12 @@
 import { history, Reducer, Effect } from 'umi';
-import { register, login, getSvgCode } from '@/service/user';
-
+import {
+  register,
+  login,
+  getSvgCode,
+  queryUser,
+  modifyUser,
+} from '@/service/user';
+import { message } from 'antd';
 import { CurrentUser } from './gloal.d';
 
 export interface StateType {
@@ -18,11 +24,14 @@ export interface UserModelType {
     register: Effect;
     login: Effect;
     getSvgCode: Effect;
+    fetchUser: Effect;
+    modifyUser: Effect;
   };
   reducers: {
     saveRegister: Reducer;
     saveLogin: Reducer;
     saveSvgCode: Reducer;
+    saveUser: Reducer;
   };
 }
 
@@ -49,7 +58,7 @@ const Model: UserModelType = {
 
       console.log(res);
 
-      if (res.code === 2000) {
+      if (res.code === 'success') {
         if (callback && typeof callback === 'function') callback(res.data);
 
         yield put({
@@ -66,6 +75,23 @@ const Model: UserModelType = {
         type: 'saveSvgCode',
         payload: res || {},
       });
+    },
+
+    *fetchUser({}, { call, put }) {
+      const res = yield call(queryUser);
+      if (res.code === 'success') {
+        yield put({
+          type: 'saveUser',
+          payload: res.data || null,
+        });
+      }
+    },
+
+    *modifyUser({ payload }, { put, call }) {
+      const res = yield call(modifyUser, payload);
+      if (res.code === 'success') {
+        message.success(`${res.data.name}, 恭喜您修改信息成功！`);
+      }
     },
   },
 
@@ -88,6 +114,13 @@ const Model: UserModelType = {
       return {
         ...state,
         svgCode: payload,
+      };
+    },
+
+    saveUser(state: any, action) {
+      return {
+        ...state,
+        userInfo: action.payload || {},
       };
     },
   },

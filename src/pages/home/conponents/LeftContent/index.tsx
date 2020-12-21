@@ -1,9 +1,9 @@
 import React, { FC, useState, useEffect } from 'react';
-
+import logo from '@/assets/nouser.png';
 import { connect, Dispatch, history, Link } from 'umi';
 
 import { Divider, Menu } from 'antd';
-import { HomeOutlined } from '@ant-design/icons';
+import { HomeOutlined, SmileTwoTone } from '@ant-design/icons';
 import styles from './index.less';
 import { User } from '../../data.d';
 import { StateType } from '../../model';
@@ -21,7 +21,7 @@ interface PropsType {
 }
 
 const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
-  const { name, address, avatar, introduce } = currentUser;
+  const { name, address, avatar = logo, introduce } = currentUser;
 
   const selectKey = (key: SelectType) => {
     history.push(`/${key}`);

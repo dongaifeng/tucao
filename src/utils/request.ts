@@ -4,7 +4,7 @@
  */
 
 import { extend } from 'umi-request';
-import { notification } from 'antd';
+import { notification, message } from 'antd';
 
 const codeMessage: { [propName: number]: string } = {
   200: '服务器成功返回请求的数据。',
@@ -46,6 +46,7 @@ const errorHandler = (error: { response: Response }) => {
 const request = extend({
   errorHandler, // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
+  // getResponse: true,
 });
 
 // request拦截器, 改变url 或 options.
@@ -53,8 +54,8 @@ request.interceptors.request.use((url, options) => {
   let c_token = localStorage.getItem('x-auth-token');
   if (c_token) {
     const headers = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+      // 'Content-Type': 'application/json',
+      // Accept: 'application/json',
       Authorization: 'Bearer ' + c_token,
     };
     return {
@@ -62,11 +63,6 @@ request.interceptors.request.use((url, options) => {
       options: { ...options, headers: headers },
     };
   } else {
-    const headers = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: 'Bearer ' + c_token,
-    };
     return {
       url: url,
       options: { ...options },
@@ -75,11 +71,26 @@ request.interceptors.request.use((url, options) => {
 });
 
 // response拦截器, 处理response
-request.interceptors.response.use((response, options) => {
+request.interceptors.response.use(async (response, options) => {
   // let token = response.headers.get('x-auth-token');
   // if (token) {
   //   localStorage.setItem('x-auth-token', token);
   // }
+  const data = await response.clone().json();
+  console.log(data);
+  if (data.code === 'error') {
+    notification.error({
+      message: `请求错误 ${data.code}: ${response.url}`,
+      description: data.message,
+    });
+  } else if (data.code === 'timeout') {
+    notification.error({
+      message: `token过期，请重新登录： ${data.code}: ${response.url}`,
+      description: data.message,
+    });
+  } else if (data.code === 'no-login') {
+    message.info('您还没有登录');
+  }
   return response;
 });
 

@@ -23,3 +23,24 @@ export async function sendCode(params: { email: string }) {
     params,
   });
 }
+
+export async function queryUser(params: any) {
+  return request('/api/getUser', {
+    params,
+  });
+}
+
+export async function modifyUser(data: any) {
+  return request('/api/updateUser', {
+    method: 'POST',
+    data,
+  });
+}
+
+export async function uploadFile(data: any) {
+  return request('/api/uploadFile', {
+    // headers: { 'Content-Type': 'multipart/form-data' },
+    method: 'POST',
+    data,
+  });
+}

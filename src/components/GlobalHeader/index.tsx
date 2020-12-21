@@ -1,12 +1,17 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { Button, Menu, Dropdown } from 'antd';
-import { history, ConnectProps, connect, Link } from 'umi';
+import { history, connect, Link, Dispatch } from 'umi';
 import logo from '@/assets/logo.png';
 import styles from './index.less';
 
 import HeaderSearch from '@/components/HeaderSearch';
 
-interface PropsType {}
+import { StateType } from '../../models/user';
+interface PropsType {
+  dispatch: Dispatch;
+  userInfo: StateType['userInfo'];
+  status: StateType['status'];
+}
 
 const menu = (
   <Menu>
@@ -19,11 +24,26 @@ const menu = (
   </Menu>
 );
 
-const PageHeader: FC<PropsType> = () => {
-  const [login, setLogin] = useState<boolean>(true);
+const PageHeader: FC<PropsType> = ({ dispatch, userInfo, status }) => {
+  const [login, setLogin] = useState<boolean>(false);
   const toLogin = () => {
     history.push('/user/login');
   };
+
+  useEffect(() => {
+    dispatch({
+      type: 'user/fetchUser',
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log(userInfo, 'llllll');
+    if (userInfo) {
+      setLogin(true);
+    } else {
+      setLogin(false);
+    }
+  });
 
   return (
     <>
@@ -36,10 +56,11 @@ const PageHeader: FC<PropsType> = () => {
       <div className={styles.right}>
         <HeaderSearch />
 
-        {login ? (
+        {!login ? (
           <div>
             <Button onClick={toLogin} type="text" danger>
-              登录
+              {' '}
+              登录{' '}
             </Button>
             <Button type="text" danger>
               <Link to="/user/register">注册</Link>
@@ -51,7 +72,7 @@ const PageHeader: FC<PropsType> = () => {
             overlayClassName={styles.userDron}
             placement="bottomCenter"
           >
-            <a onClick={e => e.preventDefault()}>dongaifeng</a>
+            <a onClick={e => e.preventDefault()}>{userInfo?.name}</a>
           </Dropdown>
         )}
       </div>
@@ -59,4 +80,11 @@ const PageHeader: FC<PropsType> = () => {
   );
 };
 
-export default PageHeader;
+type P = {
+  user: StateType;
+};
+
+export default connect(({ user }: P) => ({
+  status: user.status,
+  userInfo: user.userInfo,
+}))(PageHeader);

@@ -1,8 +1,8 @@
 import React, { Component, useRef, useState } from 'react';
+import { connect, Dispatch } from 'umi';
 import {
   Form,
   Input,
-  InputNumber,
   Button,
   Select,
   Row,
@@ -12,12 +12,28 @@ import {
   message,
   Tag,
 } from 'antd';
+import ImgCrop from 'antd-img-crop';
 import { UserOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
 import { CurrentUser } from '@/models/gloal';
+import { StateType } from '@/models/user';
+import areaData from './areaData';
+import PageLoading from '@/components/PageLoading';
+import TagList from './components/TagList';
+import AvatarView from './components/AvatarView';
 import styles from './index.less';
 const { Option } = Select;
 
-interface PropsType {}
+interface PropsType {
+  dispatch: Dispatch;
+  userInfo: StateType['userInfo'];
+}
+interface IStateType {
+  cities: { [propName: string]: any };
+  provinces: string | undefined;
+  city: string | undefined;
+}
+
+const provinces = areaData.provinces;
 
 const layout = {
   labelCol: { span: 4 },
@@ -28,146 +44,121 @@ const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 
-const props = {
-  name: 'file',
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  headers: {
-    authorization: 'authorization-text',
-  },
-  onChange(info) {
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-};
+// const props = {
+//   name: 'file',
+//   action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+//   headers: {
+//     authorization: 'authorization-text',
+//   },
+//   onChange(info) {
+//     if (info.file.status !== 'uploading') {
+//       console.log(info.file, info.fileList);
+//     }
+//     if (info.file.status === 'done') {
+//       message.success(`${info.file.name} file uploaded successfully`);
+//     } else if (info.file.status === 'error') {
+//       message.error(`${info.file.name} file upload failed.`);
+//     }
+//   },
+// };
 
-export interface TagType {
-  key: string;
-  label: string;
-}
+// 头像组件
+// const AvatarView = ({ avatar }: { avatar: string }) => (
+//   <div className={styles.avatarBox}>
+//     <Avatar src={avatar} size={64} icon={<UserOutlined />} />
 
-// 标签组件
-const TagList: React.FC<{ tags: CurrentUser['tags'] }> = ({ tags }) => {
-  // 可以直接 对象类型的接口里面的某一个属性
-  const ref = useRef<Input | null>(null);
-  const [newTags, setNewTags] = useState<TagType[]>([]);
-  const [inputVisible, setInputVisible] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<string>('');
+//     <div style={{ marginTop: '20px', }} >
+//       <ImgCrop rotate>
+//         <Upload
 
-  const showInput = () => {
-    setInputVisible(true);
-    if (ref.current) {
-      // eslint-disable-next-line no-unused-expressions
-      ref.current?.focus();
-    }
+//         >
+//           <Button type="primary" ghost icon={<UploadOutlined />}>
+//             上传头像
+//           </Button>
+//         </Upload>
+//       </ImgCrop>
+//     </div>
+//   </div>
+// );
+
+class Setting extends Component<PropsType & IStateType> {
+  state: IStateType = {
+    cities: {},
+    provinces: undefined,
+    city: undefined,
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleInputConfirm = () => {
-    let tempsTags = [...newTags];
-    if (
-      inputValue &&
-      tempsTags.filter(tag => tag.label === inputValue).length === 0
-    ) {
-      tempsTags = [
-        ...tempsTags,
-        { key: `new-${tempsTags.length}`, label: inputValue },
-      ];
-    }
-    setNewTags(tempsTags);
-    setInputVisible(false);
-    setInputValue('');
-  };
-
-  return (
-    <div className={styles.tags}>
-      {(tags || []).concat(newTags).map(item => (
-        <Tag key={item.key}>{item.label}</Tag>
-      ))}
-      {inputVisible && (
-        <Input
-          ref={ref}
-          type="text"
-          size="small"
-          style={{ width: 78 }}
-          value={inputValue}
-          onChange={handleInputChange}
-          onBlur={handleInputConfirm}
-          onPressEnter={handleInputConfirm}
-        />
-      )}
-      {!inputVisible && (
-        <Tag onClick={showInput} style={{ borderStyle: 'dashed' }}>
-          <PlusOutlined />
-        </Tag>
-      )}
-    </div>
-  );
-};
-
-const provinceData = ['Zhejiang', 'Jiangsu'];
-const cityData = {
-  Zhejiang: ['Hangzhou', 'Ningbo', 'Wenzhou'],
-  Jiangsu: ['Nanjing', 'Suzhou', 'Zhenjiang'],
-};
-
-class Setting extends Component<PropsType> {
-  state = {
-    provinceData,
-    cityData,
-  };
-
-  onFinish = values => {
+  onFinish = (values: any) => {
     console.log('Success:', values);
+    const { dispatch } = this.props;
+    const country = `${this.state.provinces}-${this.state.city}`;
+    dispatch({
+      type: 'user/modifyUser',
+      payload: { country, ...values },
+    });
   };
 
-  onFinishFailed = errorInfo => {
+  onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
 
-  handleProvinceChange = value => {};
+  ProvinceChange = (value: string) => {
+    console.log(value);
+    this.setState({
+      cities: provinces[value].citys,
+      provinces: provinces[value].name,
+    });
+  };
 
-  onSecondCityChange = value => {};
+  CityChange = (value: string) => {
+    console.log(value);
+    this.setState((state: IStateType, props) => ({
+      city: state.cities[value].name,
+    }));
+  };
+
+  componentDidMount() {
+    console.log(this.props?.userInfo, 'did mount');
+  }
+
+  // componentDidUpdate中必须比较 props 否则会产生死循环
+  componentDidUpdate(prevProps: PropsType) {
+    console.log(this.props?.userInfo, 'componentDidUpdate');
+
+    if (this.props.userInfo !== prevProps.userInfo && this.props.userInfo) {
+      this.setState({
+        cities: provinces[this.props.userInfo.province].citys,
+      });
+    }
+  }
 
   render() {
+    const { cities } = this.state;
+    const { userInfo } = this.props;
+    if (!userInfo) {
+      return (
+        <div className={styles.box}>
+          <PageLoading />
+        </div>
+      );
+    }
+
     return (
       <div className={styles.box}>
         <Row justify="center">
           <Col span={10}>
-            <div className={styles.avatarBox}>
-              <Avatar size={64} icon={<UserOutlined />} />
-
-              <div
-                style={{
-                  marginTop: '20px',
-                }}
-              >
-                <Upload {...props}>
-                  <Button type="primary" ghost icon={<UploadOutlined />}>
-                    上传头像
-                  </Button>
-                </Upload>
-              </div>
-            </div>
+            <AvatarView avatar={userInfo.avatar || ''} />
 
             <Form
               {...layout}
               name="basic"
-              initialValues={{ remember: true }}
+              initialValues={userInfo}
               onFinish={this.onFinish}
               onFinishFailed={this.onFinishFailed}
             >
               <Form.Item
                 label="昵称"
-                name="username"
+                name="name"
                 rules={[
                   { required: true, message: 'Please input your username!' },
                 ]}
@@ -175,9 +166,13 @@ class Setting extends Component<PropsType> {
                 <Input />
               </Form.Item>
 
+              <Form.Item name="email" label="邮箱">
+                <Input />
+              </Form.Item>
+
               <Form.Item
                 label="手机号"
-                name="password"
+                name="phone"
                 rules={[
                   { required: true, message: 'Please input your password!' },
                 ]}
@@ -186,37 +181,54 @@ class Setting extends Component<PropsType> {
               </Form.Item>
 
               <Form.Item label="我的标签" name="tags">
-                <TagList tags={[]} />
+                <TagList />
               </Form.Item>
 
               <Form.Item label="居住地">
-                <Select defaultValue={provinceData[0]} style={{ width: 120 }}>
-                  {provinceData.map(province => (
-                    <Option key={province} value={province}>
-                      {province}
-                    </Option>
-                  ))}
-                </Select>
-                <Select style={{ width: 120 }}>
-                  {cityData.Jiangsu.map(city => (
-                    <Option key={city}>{city}</Option>
-                  ))}
-                </Select>
+                <Form.Item noStyle name="province">
+                  <Select
+                    placeholder="选择省份"
+                    style={{ width: 200 }}
+                    onChange={this.ProvinceChange}
+                  >
+                    {Object.keys(provinces).map(item => (
+                      <Option key={item} value={item}>
+                        {provinces[item].name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+
+                <span style={{ padding: '0px 20px' }}>--</span>
+
+                <Form.Item noStyle name="city">
+                  <Select
+                    placeholder="选择城市"
+                    style={{ width: 200 }}
+                    onChange={this.CityChange}
+                  >
+                    {Object.keys(cities).map(item => (
+                      <Option value={item} key={item}>
+                        {cities[item].name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
               </Form.Item>
 
               <Form.Item
                 label="个人介绍"
-                name="detail"
+                name="introduce"
                 rules={[
-                  { required: true, message: 'Please input your password!' },
+                  { required: true, message: '用一段文字来描述自己吧！' },
                 ]}
               >
-                <Input.TextArea />
+                <Input.TextArea autoSize={{ minRows: 5, maxRows: 5 }} />
               </Form.Item>
 
               <Form.Item {...tailLayout}>
                 <Button type="primary" htmlType="submit">
-                  保存
+                  保存修改
                 </Button>
               </Form.Item>
             </Form>
@@ -227,4 +239,10 @@ class Setting extends Component<PropsType> {
   }
 }
 
-export default Setting;
+type P = {
+  user: StateType;
+};
+
+export default connect(({ user }: P) => ({
+  userInfo: user.userInfo,
+}))(Setting);

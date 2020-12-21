@@ -4,10 +4,14 @@ export interface CurrentUser {
   title?: string;
   group?: string;
   signature?: string;
-  tags?: {
-    key: string;
-    label: string;
-  }[];
+  // tags?: {
+  //   key: string;
+  //   label: string;
+  // }[];
   userid?: string;
   unreadCount?: number;
+  province?: String | undefined;
+  city?: String | undefined;
+  introduce?: String | undefined;
+  tags?: String | undefined;
 }
