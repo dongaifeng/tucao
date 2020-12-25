@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 import logo from '@/assets/nouser.png';
 import { connect, Dispatch, history, Link } from 'umi';
 
@@ -21,10 +21,17 @@ interface PropsType {
 }
 
 const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
-  const { name, address, avatar = logo, introduce } = currentUser;
+  const { name, country, avatar, introduce } = currentUser;
+  const ImgDom = useRef<HTMLImageElement | null>(null);
 
   const selectKey = (key: SelectType) => {
     history.push(`/${key}`);
+  };
+
+  const avatarError = () => {
+    if (ImgDom && ImgDom.current) {
+      ImgDom.current.src = logo;
+    }
   };
 
   useEffect(() => {
@@ -36,7 +43,13 @@ const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
   return (
     <div className={styles.box}>
       <Link to="/setting">
-        <img src={avatar} alt="avatar" />
+        <img
+          ref={ImgDom}
+          style={{ borderRadius: '50%' }}
+          src={avatar}
+          alt="我的头像"
+          onError={e => avatarError()}
+        />
       </Link>
       <div className={styles.name}>{name}</div>
       <div className={styles.sign}>{introduce}</div>
@@ -47,7 +60,7 @@ const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
             marginRight: 8,
           }}
         />
-        {address}
+        {country}
       </p>
 
       <Divider dashed />

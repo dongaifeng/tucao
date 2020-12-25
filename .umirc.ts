@@ -3,6 +3,8 @@ import { defineConfig } from 'umi';
 export default defineConfig({
   links: [{ rel: 'icon', href: 'favicon.png' }],
 
+  // publicPath: process.env.NODE_ENV === 'production' ? '/foo/' : '/'
+
   // 配置前端服务项， 低于.env文件优先级
   // devServer: {
   //   port: 7777,
@@ -15,6 +17,10 @@ export default defineConfig({
       target: 'http://localhost:7000/',
       changeOrigin: true,
       pathRewrite: { '^/api': '/api' },
+    },
+    '/public': {
+      target: 'http://localhost:7000/',
+      changeOrigin: true,
     },
   },
 

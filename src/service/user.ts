@@ -37,10 +37,18 @@ export async function modifyUser(data: any) {
   });
 }
 
-export async function uploadFile(data: any) {
-  return request('/api/uploadFile', {
-    // headers: { 'Content-Type': 'multipart/form-data' },
+export async function uploadBuffer(data: any) {
+  return request('/api/uploadBuffer', {
     method: 'POST',
     data,
+    headers: { 'Content-Type': 'application/octet-stream' },
+  });
+}
+
+export async function uploadFile(data: any) {
+  return request('/api/updateAvatar', {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    method: 'POST',
+    body: data,
   });
 }
