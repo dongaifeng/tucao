@@ -1,10 +1,14 @@
 import React, { FC } from 'react';
 import { connect, Dispatch } from 'umi';
-import { Row, Col, Card, List, Avatar, Input } from 'antd';
+import { Row, Col, Card, List, Avatar, Input, Button, message } from 'antd';
 import {
   UploadOutlined,
   LoadingOutlined,
   StarOutlined,
+  HeartOutlined,
+  HeartFilled,
+  LikeFilled,
+  StarFilled,
   LikeOutlined,
   MessageOutlined,
 } from '@ant-design/icons';
@@ -14,28 +18,34 @@ import styles from './index.less';
 
 import { StateType } from './model';
 import { ListItemDataType } from './data.d';
+import { CurrentUser } from '@/models/gloal';
 
 interface TStateType {
   loading: boolean;
+  initLoading: boolean;
   key: string;
   pubVal: undefined | string;
+  page: number;
+  size: number;
 }
 interface PropsType {
   dispatch: Dispatch;
   list: ListItemDataType[];
   recommend: ListItemDataType[];
+  currentUser: CurrentUser;
+  likeArticles: StateType['likeArticles'];
 }
 
 interface TPType {
   icon: React.ReactNode | any;
   text: string | number;
+  onClick?: () => void;
 }
 
-const IconText: FC<TPType> = ({ icon, text }) => {
+const IconText: FC<TPType> = ({ icon, text, onClick }) => {
   return (
-    <span>
-      {React.createElement(icon)}
-      {text}
+    <span style={{ cursor: 'pointer' }} onClick={onClick}>
+      {icon} {text}
     </span>
   );
 };
@@ -53,20 +63,25 @@ const tabList = [
 
 class ContentList extends React.Component<PropsType, TStateType> {
   state: TStateType = {
-    loading: false,
+    loading: false, // 控制 加载更多按钮的显示
     key: 'tab1',
     pubVal: undefined,
+    initLoading: true, // 控制 占位符的显示
+    page: 1,
+    size: 10,
   };
 
-  loadMore = () => {
-    return <div>jiaz</div>;
-  };
-
-  fetchData = (size: number) => {
+  fetchData = (size: number, page: number) => {
     const { dispatch } = this.props;
+
     dispatch({
       type: 'home/fetchData',
-      payload: { size, page: 1 },
+      payload: { size, page },
+    });
+
+    this.setState({
+      initLoading: false,
+      page: page + 1,
     });
   };
 
@@ -119,14 +134,79 @@ class ContentList extends React.Component<PropsType, TStateType> {
     });
   };
 
+  collectHandle = (item: ListItemDataType) => {
+    console.log(item);
+    const { page, size } = this.state;
+    this.props.dispatch({
+      type: 'home/collect',
+      payload: { id: item.id },
+      callback: () => {
+        this.fetchData(page * size, 1);
+      },
+    });
+  };
+
+  likeHandle = (item: ListItemDataType) => {
+    const { page, size } = this.state;
+
+    if (this.props.likeArticles.includes(item.id)) {
+      return message.info('已经点赞，不可重复点赞！');
+    }
+
+    this.props.dispatch({
+      type: 'home/like',
+      payload: { id: item.id },
+      callback: () => {
+        this.fetchData(page * size, 1);
+      },
+    });
+  };
+
+  onLoadMore = () => {
+    const { page, size } = this.state;
+
+    this.setState({
+      loading: true,
+    });
+
+    this.props.dispatch({
+      type: 'home/loadMore',
+      payload: { size, page },
+
+      callback: () => {
+        this.setState({
+          loading: false,
+          page: page + 1,
+        });
+      },
+    });
+  };
+
   componentDidMount() {
-    this.fetchData(10);
+    const { page, size } = this.state;
+
+    this.fetchData(size, page);
     this.fetchRecommend();
   }
 
   render() {
-    const { loading, key } = this.state;
-    const { list, recommend } = this.props;
+    const { initLoading, loading, key } = this.state;
+    const { list, recommend, currentUser, likeArticles } = this.props;
+
+    const loadMore = !initLoading && (
+      <div
+        style={{
+          textAlign: 'center',
+          marginTop: 12,
+          height: 32,
+          lineHeight: '32px',
+        }}
+      >
+        <Button loading={loading} onClick={this.onLoadMore}>
+          加载更多
+        </Button>
+      </div>
+    );
 
     console.log(this.props, '<---------------');
 
@@ -145,7 +225,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
                     style={{ resize: 'none' }}
                     onChange={e => this.pubChange(e.target.value)}
                     // value={pubVal}
-                    placeholder="发表心情"
+                    placeholder="吐槽一下今天不开心的事吧..."
                     autoSize={{ minRows: 3, maxRows: 3 }}
                   />
                 </Col>
@@ -164,11 +244,12 @@ class ContentList extends React.Component<PropsType, TStateType> {
                   this.onTabChange(key);
                 }}
                 style={{ width: '100%' }}
-                loading={loading}
+                loading={initLoading}
               >
                 <List
                   itemLayout="vertical"
-                  // loadMore={this.loadMore}
+                  loadMore={loadMore}
+                  loading={initLoading}
                   // header={<div>头部</div>}
                   footer={<div>底部</div>}
                   dataSource={list}
@@ -177,17 +258,32 @@ class ContentList extends React.Component<PropsType, TStateType> {
                       key={item.id}
                       actions={[
                         <IconText
-                          icon={StarOutlined}
-                          text={item.star}
+                          icon={
+                            item.star.indexOf(currentUser.user_id as number) ===
+                            -1 ? (
+                              <StarOutlined />
+                            ) : (
+                              <StarFilled className={styles.iconActive} />
+                            )
+                          }
+                          text={item.star.length || ''}
                           key="list-vertical-star-o"
+                          onClick={() => this.collectHandle(item)}
                         />,
                         <IconText
-                          icon={LikeOutlined}
-                          text={item.activeUser}
+                          icon={
+                            likeArticles.indexOf(item.id) === -1 ? (
+                              <LikeOutlined />
+                            ) : (
+                              <LikeFilled className={styles.iconActive} />
+                            )
+                          }
+                          text={item.likes}
                           key="list-vertical-like-o"
+                          onClick={() => this.likeHandle(item)}
                         />,
                         <IconText
-                          icon={MessageOutlined}
+                          icon={<MessageOutlined />}
                           text={item.likes}
                           key="list-vertical-message"
                         />,
@@ -218,4 +314,6 @@ class ContentList extends React.Component<PropsType, TStateType> {
 export default connect(({ home }: { home: StateType }) => ({
   list: home.list,
   recommend: home.recommend,
+  currentUser: home.currentUser,
+  likeArticles: home.likeArticles,
 }))(ContentList);

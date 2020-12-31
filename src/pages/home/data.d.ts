@@ -1,5 +1,5 @@
 export interface ListItemDataType {
-  id: string;
+  id: number;
   owner: string;
   title: string;
   avatar: string;
@@ -15,30 +15,30 @@ export interface ListItemDataType {
   description: string;
   activeUser: number;
   newUser: number;
-  star: number;
+  star: number[];
   likes: number;
   message: number;
   content: string;
   members: Member[];
 }
 
-export interface User {
-  name: string;
-  avatar: string;
-  userid: string;
-  notice: NoticeType[];
-  email: string;
-  introduce: string;
-  title: string;
-  group: string;
-  tags: TagType[];
-  notifyCount: number;
-  unreadCount: number;
-  country: string;
-  geographic: GeographicType;
-  address: string;
-  phone: string;
-}
+// export interface User {
+//   name: string;
+//   avatar: string;
+//   userid: string;
+//   notice: NoticeType[];
+//   email: string;
+//   introduce: string;
+//   title: string;
+//   group: string;
+//   tags: TagType[];
+//   notifyCount: number;
+//   unreadCount: number;
+//   country: string;
+//   geographic: GeographicType;
+//   address: string;
+//   phone: string;
+// }
 
 export interface Member {
   avatar: string;

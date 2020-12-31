@@ -18,3 +18,17 @@ export async function publish(data: any) {
     data,
   });
 }
+
+export async function collect(data: any) {
+  return request('/api/article/collect', {
+    method: 'POST',
+    data,
+  });
+}
+
+export async function like(data: any) {
+  return request('/api/article/like', {
+    method: 'POST',
+    data,
+  });
+}

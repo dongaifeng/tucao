@@ -8,7 +8,7 @@ export interface CurrentUser {
   //   key: string;
   //   label: string;
   // }[];
-  userid?: string;
+  user_id?: number;
   unreadCount?: number;
   province?: String | undefined;
   city?: String | undefined;

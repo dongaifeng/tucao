@@ -1,25 +1,32 @@
 import { Effect, Reducer } from 'umi';
-import { ListItemDataType, User } from './data.d';
-import { queryList, queryUser, publish } from './service';
+import { ListItemDataType } from './data.d';
+import { CurrentUser } from '@/models/gloal';
+import { queryList, queryUser, publish, collect, like } from './service';
 import { message } from 'antd';
 
 export interface StateType {
   list: ListItemDataType[];
   recommend: ListItemDataType[];
-  currentUser: Partial<User>;
+  currentUser: Partial<CurrentUser>;
+  likeArticles: number[];
 }
 
 interface EffectsType {
   fetchData: Effect;
+  loadMore: Effect;
   fetchUser: Effect;
   fetchRecommend: Effect;
   publish: Effect;
+  collect: Effect;
+  like: Effect;
 }
 
 interface ReducersType {
   queryList: Reducer<StateType>;
   saveUser: Reducer<StateType>;
   saveRecommend: Reducer<StateType>;
+  saveLoadMore: Reducer<StateType>;
+  saveLikeArticles: Reducer<StateType>;
 }
 
 interface ModelType {
@@ -36,6 +43,7 @@ const Model: ModelType = {
     list: [],
     recommend: [],
     currentUser: {},
+    likeArticles: [],
   },
   effects: {
     *fetchData({ payload }, { call, put }) {
@@ -45,6 +53,50 @@ const Model: ModelType = {
         type: 'queryList',
         payload: Array.isArray(data) ? data : [],
       });
+    },
+
+    *loadMore({ payload, callback }, { call, put }) {
+      const { data } = yield call(queryList, payload);
+
+      if (callback) {
+        callback();
+      }
+
+      if (data.length > 0) {
+        yield put({
+          type: 'saveLoadMore',
+          payload: Array.isArray(data) ? data : [],
+        });
+        return false;
+      }
+
+      message.info('没有更多了！');
+    },
+
+    *collect({ payload, callback }, { call, put }) {
+      const res = yield call(collect, payload);
+      if (res.code === 'success') {
+        message.success(res.message || '成功');
+        if (callback) {
+          callback();
+        }
+      }
+    },
+
+    *like({ payload, callback }, { call, put }) {
+      const res = yield call(like, payload);
+      if (res.code === 'success') {
+        message.success(res.message || '成功');
+
+        yield put({
+          type: 'saveLikeArticles',
+          payload: payload.id,
+        });
+
+        if (callback) {
+          callback();
+        }
+      }
     },
 
     *fetchUser({}, { call, put }) {
@@ -82,6 +134,14 @@ const Model: ModelType = {
       };
     },
 
+    saveLoadMore(state: any, action) {
+      const arr = state.list;
+      return {
+        ...state,
+        list: [...arr, ...action.payload],
+      };
+    },
+
     saveUser(state: any, action) {
       return {
         ...state,
@@ -93,6 +153,14 @@ const Model: ModelType = {
       return {
         ...state,
         recommend: action.payload,
+      };
+    },
+
+    saveLikeArticles(state: any, { payload }) {
+      const arr = [...state.likeArticles, payload];
+      return {
+        ...state,
+        likeArticles: arr,
       };
     },
   },
