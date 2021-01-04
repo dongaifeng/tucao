@@ -5,4 +5,8 @@ module.exports = {
     page: true,
     REACT_APP_ENV: true,
   },
+
+  rules: {
+    'operator-linebreak': [2, 'before'], //换行时运算符在行尾还是行首
+  },
 };

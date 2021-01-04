@@ -184,7 +184,6 @@ class ContentList extends React.Component<PropsType, TStateType> {
 
   componentDidMount() {
     const { page, size } = this.state;
-
     this.fetchData(size, page);
     this.fetchRecommend();
   }
