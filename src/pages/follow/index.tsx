@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react';
 import { Dispatch, connect, history } from 'umi';
 import { List, Avatar, Button, Card } from 'antd';
 import styles from './index.less';
-import { follow } from './service';
+import { follow, cancelFollow } from './service';
 
 import { StateType } from './model';
 import { FollowType } from './data.d';
@@ -42,7 +42,7 @@ const Follow: FC<IProps> = ({ dispatch, follows }) => {
   }, []);
 
   const followHandle = async item => {
-    const res = await follow({ beFollowId: item.user_id });
+    const res = await cancelFollow({ beFollowId: item.user_id });
     console.log('>>>>>>>>>>>', res);
   };
 
@@ -60,7 +60,7 @@ const Follow: FC<IProps> = ({ dispatch, follows }) => {
             <List.Item
               actions={[
                 <Button onClick={() => followHandle(item)} type="primary">
-                  关注
+                  取消关注
                 </Button>,
               ]}
               extra={<Button>发私信</Button>}
