@@ -3,17 +3,17 @@ import { connect, Dispatch } from 'umi';
 import { Row, Col, Card, List, Avatar, Input, Button, message } from 'antd';
 import {
   UploadOutlined,
-  LoadingOutlined,
   StarOutlined,
-  HeartOutlined,
-  HeartFilled,
+  MessageFilled,
   LikeFilled,
   StarFilled,
   LikeOutlined,
   MessageOutlined,
 } from '@ant-design/icons';
+// import { CSSTransition } from 'react-transition-group';
 
 import LeftContent from './conponents/LeftContent';
+import CommentList from './conponents/CommentList';
 import styles from './index.less';
 
 import { StateType } from './model';
@@ -27,6 +27,7 @@ interface TStateType {
   pubVal: undefined | string;
   page: number;
   size: number;
+  showCommentId: number | undefined;
 }
 interface PropsType {
   dispatch: Dispatch;
@@ -69,6 +70,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
     initLoading: true, // 控制 占位符的显示
     page: 1,
     size: 10,
+    showCommentId: undefined,
   };
 
   fetchData = (size: number, page: number) => {
@@ -162,6 +164,27 @@ class ContentList extends React.Component<PropsType, TStateType> {
     });
   };
 
+  commentHandle = (item: ListItemDataType) => {
+    const { showCommentId } = this.state;
+    const { dispatch } = this.props;
+    console.log(item);
+
+    if (showCommentId !== item.id) {
+      dispatch({
+        type: 'home/featchComment',
+        payload: { articleId: item.id },
+      });
+
+      this.setState({
+        showCommentId: item.id,
+      });
+    } else {
+      this.setState({
+        showCommentId: undefined,
+      });
+    }
+  };
+
   onLoadMore = () => {
     const { page, size } = this.state;
 
@@ -189,7 +212,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
   }
 
   render() {
-    const { initLoading, loading, key } = this.state;
+    const { initLoading, loading, key, showCommentId } = this.state;
     const { list, recommend, currentUser, likeArticles } = this.props;
 
     const loadMore = !initLoading && (
@@ -207,7 +230,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
       </div>
     );
 
-    console.log(this.props, '<---------------');
+    // console.log(this.props, '<---------------');
 
     return (
       <div>
@@ -253,48 +276,59 @@ class ContentList extends React.Component<PropsType, TStateType> {
                   footer={<div>底部</div>}
                   dataSource={list}
                   renderItem={item => (
-                    <List.Item
-                      key={item.id}
-                      actions={[
-                        <IconText
-                          icon={
-                            item.star.indexOf(currentUser.user_id as number) ===
-                            -1 ? (
-                              <StarOutlined />
-                            ) : (
-                              <StarFilled className={styles.iconActive} />
-                            )
-                          }
-                          text={item.star.length || ''}
-                          key="list-vertical-star-o"
-                          onClick={() => this.collectHandle(item)}
-                        />,
-                        <IconText
-                          icon={
-                            likeArticles.indexOf(item.id) === -1 ? (
-                              <LikeOutlined />
-                            ) : (
-                              <LikeFilled className={styles.iconActive} />
-                            )
-                          }
-                          text={item.likes}
-                          key="list-vertical-like-o"
-                          onClick={() => this.likeHandle(item)}
-                        />,
-                        <IconText
-                          icon={<MessageOutlined />}
-                          text={item.likes}
-                          key="list-vertical-message"
-                        />,
-                      ]}
-                    >
-                      <List.Item.Meta
-                        avatar={<Avatar src={item.avatar} />}
-                        title={item.title}
-                        description={'发布时间：' + item.updatedAt}
-                      />
-                      <span>{item.content}</span>
-                    </List.Item>
+                    <>
+                      <List.Item
+                        key={item.id}
+                        actions={[
+                          <IconText
+                            icon={
+                              item.star.indexOf(
+                                currentUser.user_id as number,
+                              ) === -1 ? (
+                                <StarOutlined />
+                              ) : (
+                                <StarFilled className={styles.iconActive} />
+                              )
+                            }
+                            text={item.star.length || ''}
+                            key="list-vertical-star-o"
+                            onClick={() => this.collectHandle(item)}
+                          />,
+                          <IconText
+                            icon={
+                              likeArticles.indexOf(item.id) === -1 ? (
+                                <LikeOutlined />
+                              ) : (
+                                <LikeFilled className={styles.iconActive} />
+                              )
+                            }
+                            text={item.likes}
+                            key="list-vertical-like-o"
+                            onClick={() => this.likeHandle(item)}
+                          />,
+                          <IconText
+                            icon={
+                              showCommentId === item.id ? (
+                                <MessageFilled className={styles.iconActive} />
+                              ) : (
+                                <MessageOutlined />
+                              )
+                            }
+                            text={item.comments}
+                            key="list-vertical-message"
+                            onClick={() => this.commentHandle(item)}
+                          />,
+                        ]}
+                      >
+                        <List.Item.Meta
+                          avatar={<Avatar src={item.avatar} />}
+                          title={item.ownerName || 'TA不想有名字'}
+                          description={'发布时间：' + item.updatedAt}
+                        />
+                        <span>{item.content}</span>
+                      </List.Item>
+                      {item.id === showCommentId ? <CommentList /> : null}
+                    </>
                   )}
                 />
               </Card>

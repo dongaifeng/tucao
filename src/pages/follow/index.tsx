@@ -2,6 +2,7 @@ import React, { FC, useEffect } from 'react';
 import { Dispatch, connect, history } from 'umi';
 import { List, Avatar, Button, Card } from 'antd';
 import styles from './index.less';
+import { follow } from './service';
 
 import { StateType } from './model';
 import { FollowType } from './data.d';
@@ -40,6 +41,11 @@ const Follow: FC<IProps> = ({ dispatch, follows }) => {
     });
   }, []);
 
+  const followHandle = async item => {
+    const res = await follow({ beFollowId: item.user_id });
+    console.log('>>>>>>>>>>>', res);
+  };
+
   return (
     <div className={styles.box}>
       <Card title={rederTab()} bordered={false}>
@@ -52,7 +58,11 @@ const Follow: FC<IProps> = ({ dispatch, follows }) => {
           dataSource={follows}
           renderItem={item => (
             <List.Item
-              actions={[<Button>关注</Button>]}
+              actions={[
+                <Button onClick={() => followHandle(item)} type="primary">
+                  关注
+                </Button>,
+              ]}
               extra={<Button>发私信</Button>}
             >
               <List.Item.Meta

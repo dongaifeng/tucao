@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@ant-design/pro-layout": "^5.0.12",
+    "@types/react-transition-group": "^4.4.0",
     "@umijs/preset-react": "1.x",
     "@umijs/test": "^3.2.20",
     "antd-img-crop": "^3.13.2",
@@ -31,6 +32,7 @@
     "prettier": "^1.19.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-transition-group": "^4.4.1",
     "spark-md5": "^3.0.1",
     "umi": "^3.2.20",
     "use-merge-value": "^1.0.2",

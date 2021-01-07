@@ -32,3 +32,17 @@ export async function like(data: any) {
     data,
   });
 }
+
+export async function queryComment(data: any) {
+  return request('/api/article/queryComment', {
+    method: 'POST',
+    data,
+  });
+}
+
+export async function createComment(data: any) {
+  return request('/api/article/createComment', {
+    method: 'POST',
+    data,
+  });
+}

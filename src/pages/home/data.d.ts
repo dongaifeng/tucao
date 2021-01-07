@@ -1,9 +1,9 @@
 export interface ListItemDataType {
   id: number;
-  owner: string;
+  owner: number;
   title: string;
   avatar: string;
-  cover: string;
+  ownerName: string;
   status: 'normal' | 'exception' | 'active' | 'success';
   percent: number;
   logo: string;
@@ -17,7 +17,7 @@ export interface ListItemDataType {
   newUser: number;
   star: number[];
   likes: number;
-  message: number;
+  comments: number;
   content: string;
   members: Member[];
 }
@@ -71,4 +71,13 @@ export interface NoticeType {
   member: string;
   href: string;
   memberLink: string;
+}
+
+export interface CommentType {
+  commentId: string | number;
+  author: string;
+  avatar: string;
+  content: string;
+  updateTime: string;
+  userId: string | number;
 }

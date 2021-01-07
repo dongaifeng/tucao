@@ -1,7 +1,15 @@
 import { Effect, Reducer } from 'umi';
-import { ListItemDataType } from './data.d';
+import { ListItemDataType, CommentType } from './data.d';
 import { CurrentUser } from '@/models/gloal';
-import { queryList, queryUser, publish, collect, like } from './service';
+import {
+  queryList,
+  queryUser,
+  publish,
+  collect,
+  like,
+  queryComment,
+  createComment,
+} from './service';
 import { message } from 'antd';
 
 export interface StateType {
@@ -9,6 +17,8 @@ export interface StateType {
   recommend: ListItemDataType[];
   currentUser: Partial<CurrentUser>;
   likeArticles: number[];
+  comments: CommentType[];
+  activeArticleId: number | undefined;
 }
 
 interface EffectsType {
@@ -19,6 +29,8 @@ interface EffectsType {
   publish: Effect;
   collect: Effect;
   like: Effect;
+  featchComment: Effect;
+  createComment: Effect;
 }
 
 interface ReducersType {
@@ -27,6 +39,8 @@ interface ReducersType {
   saveRecommend: Reducer<StateType>;
   saveLoadMore: Reducer<StateType>;
   saveLikeArticles: Reducer<StateType>;
+  saveComments: Reducer<StateType>;
+  saveActiveArticleId: Reducer<StateType>;
 }
 
 interface ModelType {
@@ -44,6 +58,8 @@ const Model: ModelType = {
     recommend: [],
     currentUser: {},
     likeArticles: [],
+    comments: [],
+    activeArticleId: undefined,
   },
   effects: {
     *fetchData({ payload }, { call, put }) {
@@ -124,9 +140,48 @@ const Model: ModelType = {
         message.success('发表成功！');
       }
     },
+
+    *featchComment({ payload }, { call, put }) {
+      yield put({
+        type: 'saveActiveArticleId',
+        payload: payload?.articleId,
+      });
+
+      const { data } = yield call(queryComment, payload);
+
+      yield put({
+        type: 'saveComments',
+        payload: Array.isArray(data) ? data : [],
+      });
+    },
+
+    *createComment({ payload, callback }, { call, put, select }) {
+      const { user_id } = yield select((state: any) => state.home.currentUser);
+      const { data } = yield call(createComment, {
+        ...payload,
+        userId: user_id,
+      });
+
+      yield put({
+        type: 'saveComments',
+        payload: Array.isArray(data) ? data : [],
+      });
+
+      console.log(data);
+      message.success('评论成功！');
+
+      if (callback) callback();
+    },
   },
 
   reducers: {
+    saveActiveArticleId(state: any, action) {
+      return {
+        ...state,
+        activeArticleId: action.payload,
+      };
+    },
+
     queryList(state: any, action) {
       return {
         ...state,
@@ -161,6 +216,13 @@ const Model: ModelType = {
       return {
         ...state,
         likeArticles: arr,
+      };
+    },
+
+    saveComments(state: any, { payload }) {
+      return {
+        ...state,
+        comments: payload,
       };
     },
   },

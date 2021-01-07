@@ -5,3 +5,10 @@ export async function queryFollows(params: any) {
     params,
   });
 }
+
+export async function follow(data: any) {
+  return request('/api/follow', {
+    method: 'POST',
+    data,
+  });
+}
