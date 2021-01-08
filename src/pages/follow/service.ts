@@ -12,3 +12,10 @@ export async function follow(data: any) {
     data,
   });
 }
+
+export async function cancelFollow(data: any) {
+  return request('/api/cancelFollow', {
+    method: 'POST',
+    data,
+  });
+}
