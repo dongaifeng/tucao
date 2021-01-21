@@ -6,6 +6,12 @@ export async function queryFollows(params: any) {
   });
 }
 
+export async function queryFans(params: any) {
+  return request('/api/queryFans', {
+    params,
+  });
+}
+
 export async function follow(data: any) {
   return request('/api/follow', {
     method: 'POST',

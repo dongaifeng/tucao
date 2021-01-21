@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { Dispatch, connect, history } from 'umi';
-import { List, Avatar, Button, Card } from 'antd';
+import { List, Avatar, Button, Card, message } from 'antd';
 import styles from './index.less';
 import { follow, cancelFollow } from './service';
 
@@ -41,8 +41,16 @@ const Follow: FC<IProps> = ({ dispatch, follows }) => {
     });
   }, []);
 
-  const followHandle = async item => {
+  const followHandle = async (item: FollowType) => {
     const res = await cancelFollow({ beFollowId: item.user_id });
+    if (res.code === 'success') {
+      message.success(res.message || '取消关注成功');
+
+      dispatch({
+        type: 'follow/fetchFollows',
+        payload: {},
+      });
+    }
     console.log('>>>>>>>>>>>', res);
   };
 
@@ -67,8 +75,8 @@ const Follow: FC<IProps> = ({ dispatch, follows }) => {
             >
               <List.Item.Meta
                 avatar={<Avatar shape="square" size={50} src={item.avatar} />}
-                title={item.name}
-                description={item.description}
+                title={item.user_name}
+                description={item.introduce}
               />
             </List.Item>
           )}

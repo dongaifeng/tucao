@@ -1,6 +1,7 @@
 export interface FollowType {
-  id: number | string;
-  name: string;
+  user_id: number | string;
+  user_name: string;
   avatar: string;
-  description: string;
+  introduce: string;
+  del_flag: number;
 }
