@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Card, Avatar, Tooltip } from 'antd';
+import { Card, Avatar, Tooltip, Button, message } from 'antd';
 import { Link, connect } from 'umi';
 import { UserOutlined } from '@ant-design/icons';
 import styles from './fans.less';
 import { FollowType } from '../follow/data.d';
 import { StateType } from '../follow/model';
-import { queryFans } from '../follow/service';
+import { queryFans, follow } from '../follow/service';
 
 import { rederTab } from '../follow';
 
@@ -22,18 +22,40 @@ const Fans: FC<IProps> = ({ follows }) => {
     });
   }, []);
 
+  const followHandle = async (item: FollowType) => {
+    console.log(item);
+    const res = await follow({ beFollowId: item.user_id });
+    if (res.code === 'success') {
+      message.success('关注成功');
+    }
+  };
+
+  const renderFollowBtn = (item: FollowType) => (
+    <Button
+      onClick={() => followHandle(item)}
+      type="text"
+      style={{ color: '#fff' }}
+    >
+      也关注TA
+    </Button>
+  );
+
   return (
     <div className={styles.box}>
       <Card title={rederTab()} bordered={false}>
         {fans &&
           fans.map(item => (
             <div className={styles.item}>
-              <Link to="">
-                <Tooltip title={item.user_name} placement="top">
+              <Tooltip
+                title={renderFollowBtn(item)}
+                placement="bottom"
+                color="geekblue"
+              >
+                <Link to="">
                   <Avatar icon={<UserOutlined />} size={60} src={item.avatar} />
-                </Tooltip>
-                <div className={styles.name}>{item.user_name}</div>
-              </Link>
+                </Link>
+              </Tooltip>
+              <div className={styles.name}>{item.user_name}</div>
             </div>
           ))}
       </Card>
