@@ -53,6 +53,11 @@ export default defineConfig({
         { exact: true, path: '/follow', component: '@/pages/follow/index' },
         { exact: true, path: '/collect', component: '@/pages/collect/index' },
         { exact: true, path: '/fans', component: '@/pages/fans/index' },
+        {
+          exact: false,
+          path: '/prefile/:userId',
+          component: '@/pages/prefile/index',
+        },
         { component: '404' },
       ],
     },

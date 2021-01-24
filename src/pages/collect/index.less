@@ -1,3 +1,54 @@
-.title {
-  background: rgb(241, 242, 121);
+@import '~antd/es/style/themes/default.less';
+
+.box {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  padding: 10px 100px;
+
+  .title {
+    margin-bottom: 4px;
+    color: rgba(0, 0, 0, 0.85);
+    font-size: 15px;
+    line-height: 1.5715;
+    font-weight: 510;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+      Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji,
+      Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  }
+
+  .content {
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 13px;
+    line-height: 1.5715;
+  }
+
+  .name {
+    color: rgba(0, 0, 0, 0.85);
+    font-size: 12px;
+  }
+
+  .item {
+    width: 100px;
+    text-align: center;
+    float: left;
+    .name {
+      margin-top: 10px;
+    }
+
+    a {
+      display: block;
+      margin-bottom: 24px;
+      overflow: hidden;
+      color: @text-color;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      word-break: break-all;
+      transition: color 0.3s;
+
+      &:hover {
+        color: @primary-color;
+      }
+    }
+  }
 }

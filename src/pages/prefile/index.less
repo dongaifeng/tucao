@@ -1,0 +1,83 @@
+@import '~antd/es/style/themes/default.less';
+
+.box {
+  width: 100%;
+  height: 100%;
+  background: rgb(250, 250, 250);
+  padding: 10px 100px;
+
+  .infoBox {
+    text-align: center;
+  }
+  .userName {
+    margin-top: 32px;
+    margin-bottom: 4px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: @heading-color;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  .detail {
+    text-align: left;
+    margin-top: 15px;
+    p {
+      position: relative;
+      margin-bottom: 4px;
+      padding-left: 26px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    i {
+      position: absolute;
+      top: 4px;
+      left: 0;
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .tags {
+    :global {
+      .ant-tag {
+        margin-bottom: 8px;
+      }
+    }
+  }
+
+  .tagsTitle,
+  .teamTitle {
+    margin-bottom: 12px;
+    color: @heading-color;
+    font-weight: 500;
+  }
+
+  .followInfo {
+    .count {
+      font-size: 22px;
+      font-weight: 700;
+      color: #424242;
+      line-height: 26px;
+      margin-bottom: 5px;
+    }
+
+    .infoLabel {
+      color: #8c8c8c;
+    }
+  }
+}
+
+.tabsCard {
+  :global {
+    .ant-card-head {
+      padding: 0 16px;
+    }
+  }
+}

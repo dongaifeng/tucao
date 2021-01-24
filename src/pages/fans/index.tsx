@@ -34,6 +34,7 @@ const Fans: FC<IProps> = ({ follows }) => {
     <Button
       onClick={() => followHandle(item)}
       type="text"
+      size="small"
       style={{ color: '#fff' }}
     >
       也关注TA
@@ -49,7 +50,7 @@ const Fans: FC<IProps> = ({ follows }) => {
               <Tooltip
                 title={renderFollowBtn(item)}
                 placement="bottom"
-                color="geekblue"
+                color="pink"
               >
                 <Link to="">
                   <Avatar icon={<UserOutlined />} size={60} src={item.avatar} />
@@ -67,6 +68,8 @@ type P = {
   follow: StateType;
 };
 
-export default connect(({ follow }: P) => ({
-  follows: follow.follows,
-}))(Fans);
+export default Fans;
+
+// export default connect(({ follow }: P) => ({
+//   follows: follow.follows,
+// }))(Fans);

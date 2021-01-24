@@ -77,7 +77,7 @@ request.interceptors.response.use(async (response, options) => {
   //   localStorage.setItem('x-auth-token', token);
   // }
   const data = await response.clone().json();
-  console.log(data);
+  // console.log(data);
   if (data.code === 'error') {
     notification.error({
       message: `请求错误 ${data.code}: ${response.url}`,

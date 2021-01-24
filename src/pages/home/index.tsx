@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { connect, Dispatch } from 'umi';
+import { connect, Dispatch, history } from 'umi';
 import { Row, Col, Card, List, Avatar, Input, Button, message } from 'antd';
 import {
   UploadOutlined,
@@ -205,6 +205,11 @@ class ContentList extends React.Component<PropsType, TStateType> {
     });
   };
 
+  userDetail = (userId: number) => {
+    console.log(userId);
+    history.push(`/prefile/${userId}`);
+  };
+
   componentDidMount() {
     const { page, size } = this.state;
     this.fetchData(size, page);
@@ -321,8 +326,15 @@ class ContentList extends React.Component<PropsType, TStateType> {
                         ]}
                       >
                         <List.Item.Meta
-                          avatar={<Avatar src={item.avatar} />}
-                          title={item.ownerName || 'TA不想有名字'}
+                          avatar={<Avatar src={item.avatar} alt="没有头像哦" />}
+                          title={
+                            <Button
+                              style={{ border: 0 }}
+                              onClick={() => this.userDetail(item.owner)}
+                            >
+                              {item.ownerName || 'TA不想有名字'}
+                            </Button>
+                          }
                           description={'发布时间：' + item.updatedAt}
                         />
                         <span>{item.content}</span>

@@ -37,7 +37,7 @@ const PageHeader: FC<PropsType> = ({ dispatch, userInfo, status }) => {
   }, []);
 
   useEffect(() => {
-    console.log(userInfo, 'llllll');
+    // console.log(userInfo, 'llllll');
     if (userInfo) {
       setLogin(true);
     } else {
