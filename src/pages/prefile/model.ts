@@ -25,12 +25,21 @@ const Model: ModelType = {
   },
 
   effects: {
-    *getUserInfo({ payload }, { call, put }) {
-      const response = yield call(queryUserInfo, payload);
+    *getUserInfo({ payload }, { call, put, select }) {
+      let currentUserId = yield select(
+        (state: any) => state.user.userInfo?.user_id,
+      );
+
+      if (!currentUserId) {
+        currentUserId = localStorage.getItem('userid');
+      }
+
+      // console.log(currentUserId, '<---------------------');
+      const response = yield call(queryUserInfo, { ...payload, currentUserId });
 
       yield put({
         type: 'saveUserInfo',
-        payload: Array.isArray(response.data) ? response.data : [],
+        payload: response.data ? response.data : {},
       });
     },
   },

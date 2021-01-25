@@ -80,6 +80,8 @@ const Model: UserModelType = {
     *fetchUser({}, { call, put }) {
       const res = yield call(queryUser);
       if (res.code === 'success') {
+        localStorage.setItem('userid', res.data.user_id);
+
         yield put({
           type: 'saveUser',
           payload: res.data || null,

@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Avatar } from 'antd';
 import {
   PhoneOutlined,
@@ -7,32 +7,39 @@ import {
 } from '@ant-design/icons';
 import styles from '../index.less';
 
-const UserCard = () => {
+import { ModalState } from '../model';
+
+interface PropType {
+  info: ModalState['userInfo'];
+}
+const UserCard: FC<PropType> = ({ info }) => {
   return (
     <>
       <Avatar
         size={{ xs: 44, sm: 52, md: 60, lg: 84, xl: 100, xxl: 120 }}
-        src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
+        // src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
+        src={info.avatar}
       />
 
-      <div className={styles.userName}>董爱锋</div>
+      <div className={styles.userName}>{info.name}</div>
 
-      <div>哈哈发VS地方v但是v哈哈哈</div>
+      <div>{info.introduce}</div>
 
       <div className={styles.detail}>
         <p>
           <PhoneOutlined style={{ marginRight: 8 }} />
-          123234222
+          {info.phone}
         </p>
 
         <p>
           <MailOutlined style={{ marginRight: 8 }} />
-          123234222@qq.com
+          {info.email}
         </p>
 
         <p>
           <EnvironmentOutlined style={{ marginRight: 8 }} />
-          河北省-邢台市-东张嘛村
+          {info.country}
+          {info.address && `-${info.address}`}
         </p>
       </div>
     </>

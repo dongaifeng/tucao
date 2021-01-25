@@ -1,0 +1,8 @@
+{
+  "files.autoSave": "onWindowChange",
+  "editor.fontSize": 15,
+  "editor.renderWhitespace": "all",
+  "editor.codeActionsOnSave": null,
+  "editor.formatOnSave": true,
+  "files.autoSaveDelay": 5000
+}

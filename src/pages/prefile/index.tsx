@@ -1,28 +1,13 @@
 import React, { Component, useEffect, useRef, useState } from 'react';
-import {
-  Row,
-  Col,
-  Card,
-  Avatar,
-  Input,
-  Divider,
-  List,
-  Tag,
-  Button,
-  message,
-} from 'antd';
-import {
-  PlusOutlined,
-  HomeOutlined,
-  ContactsOutlined,
-  ClusterOutlined,
-} from '@ant-design/icons';
+import { Row, Col, Card, Input, Divider, Tag, Button, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
 import { Link, connect, Dispatch } from 'umi';
 import styles from './index.less';
-import { queryCollect } from './service';
 import Conllect from '../collect';
 import UserCard from './components/UserCard';
+
+import { ModalState } from './model';
 
 export interface TagType {
   key: string;
@@ -117,8 +102,17 @@ const TagList: React.FC<{ tags: TagType[] }> = ({ tags }) => {
   );
 };
 
-class Prefile extends Component {
-  state: any = {
+interface PropsType {
+  dispatch: Dispatch;
+  match: any;
+  userInfo: ModalState['userInfo'];
+}
+interface TStateType {
+  tabKey: string;
+}
+
+class Prefile extends Component<PropsType, TStateType> {
+  state: TStateType = {
     tabKey: 'articles',
   };
 
@@ -156,31 +150,33 @@ class Prefile extends Component {
 
   render() {
     const { tabKey } = this.state;
-
-    console.log(this.props.userInfo);
-
+    const { userInfo } = this.props;
+    console.log('----unserinfo', userInfo);
     return (
       <div className={styles.box}>
         <Row gutter={16}>
           <Col lg={7} md={24}>
             <Card className={styles.infoBox}>
-              <UserCard />
+              <UserCard info={userInfo} />
               <Divider style={{ marginTop: 16 }} dashed />
 
               <Row className={styles.followInfo}>
                 <Col span={12}>
-                  <p className={styles.count}>23</p>
+                  <p className={styles.count}>{userInfo.fansCount}</p>
                   <p className={styles.infoLabel}>关注者</p>
                 </Col>
 
                 <Col span={12}>
-                  <p className={styles.count}>23</p>
-                  <p className={styles.infoLabel}>关注者</p>
+                  <p className={styles.count}>{userInfo.followCount}</p>
+                  <p className={styles.infoLabel}>关注了</p>
                 </Col>
               </Row>
 
-              <Button type="primary" block>
-                关注TA
+              <Button
+                type={userInfo.followStatus ? 'default' : 'primary'}
+                block
+              >
+                {userInfo.followStatus ? '已关注' : '关注TA'}
               </Button>
 
               <Divider style={{ marginTop: 16 }} dashed />
@@ -212,7 +208,7 @@ class Prefile extends Component {
 }
 
 type P = {
-  follow: StateType;
+  prefile: ModalState;
 };
 
 export default connect(({ prefile }: P) => ({

@@ -9,7 +9,14 @@ export interface CurrentUser {
   //   label: string;
   // }[];
   user_id?: number;
-  unreadCount?: number;
+  fansCount?: number;
+  followCount?: number;
+  articleCount?: number;
+  followStatus?: boolean;
+  email: string;
+  phone: string;
+  country: string;
+  address: string;
   province?: String | undefined;
   city?: String | undefined;
   introduce?: String | undefined;

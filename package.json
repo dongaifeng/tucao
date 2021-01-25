@@ -27,6 +27,7 @@
     "@types/react-transition-group": "^4.4.0",
     "@umijs/preset-react": "1.x",
     "@umijs/test": "^3.2.20",
+    "antd": "4.11.0",
     "antd-img-crop": "^3.13.2",
     "lint-staged": "^10.0.7",
     "prettier": "^1.19.1",
