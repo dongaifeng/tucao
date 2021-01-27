@@ -42,16 +42,26 @@ const Follow: FC<IProps> = ({ dispatch, follows }) => {
   }, []);
 
   const followHandle = async (item: FollowType) => {
-    const res = await cancelFollow({ beFollowId: item.user_id });
-    if (res.code === 'success') {
-      message.success(res.message || '取消关注成功');
+    dispatch({
+      type: 'prefile/followHandle',
+      payload: { beFollowId: item.user_id, followStatus: true },
+      callback: () => {
+        dispatch({
+          type: 'follow/fetchFollows',
+          payload: {},
+        });
+      },
+    });
 
-      dispatch({
-        type: 'follow/fetchFollows',
-        payload: {},
-      });
-    }
-    console.log('>>>>>>>>>>>', res);
+    // const res = await cancelFollow({ beFollowId: item.user_id });
+    // if (res.code === 'success') {
+    //   message.success(res.message || '取消关注成功');
+
+    //   dispatch({
+    //     type: 'follow/fetchFollows',
+    //     payload: {},
+    //   });
+    // }
   };
 
   return (

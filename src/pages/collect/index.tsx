@@ -25,7 +25,6 @@ interface IProps {
 
 const Collect: FC<IProps> = ({ dispatch }) => {
   const [collectList, setCollectList] = useState<CollectType[]>([]);
-  const [flag, setFlag] = useState<boolean>(true);
 
   useEffect(() => {
     queryCollect({}).then(res => {
@@ -56,7 +55,12 @@ const Collect: FC<IProps> = ({ dispatch }) => {
   };
 
   const renderFollowBtn = (item: CollectType) => (
-    <Button onClick={() => cancelCollect(item)} type="link" size="small">
+    <Button
+      style={{ color: item.cancelFlag ? '' : '#ccc' }}
+      onClick={() => cancelCollect(item)}
+      type="link"
+      size="small"
+    >
       {item.cancelFlag ? '重新收藏' : '取消收藏'}
     </Button>
   );

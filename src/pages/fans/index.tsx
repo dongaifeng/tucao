@@ -1,19 +1,20 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Card, Avatar, Tooltip, Button, message } from 'antd';
-import { Link, connect } from 'umi';
+import { Link, connect, Dispatch } from 'umi';
 import { UserOutlined } from '@ant-design/icons';
 import styles from './fans.less';
 import { FollowType } from '../follow/data.d';
 import { StateType } from '../follow/model';
-import { queryFans, follow } from '../follow/service';
+import { queryFans } from '../follow/service';
 
 import { rederTab } from '../follow';
 
 interface IProps {
   follows: FollowType[];
+  dispatch: Dispatch;
 }
 
-const Fans: FC<IProps> = ({ follows }) => {
+const Fans: FC<IProps> = ({ follows, dispatch }) => {
   const [fans, setFans] = useState<FollowType[]>([]);
 
   useEffect(() => {
@@ -24,10 +25,17 @@ const Fans: FC<IProps> = ({ follows }) => {
 
   const followHandle = async (item: FollowType) => {
     console.log(item);
-    const res = await follow({ beFollowId: item.user_id });
-    if (res.code === 'success') {
-      message.success('关注成功');
-    }
+
+    dispatch({
+      type: 'prefile/followHandle',
+      payload: { beFollowId: item.user_id, followStatus: false },
+      callback: () => {},
+    });
+
+    // const res = await follow({ beFollowId: item.user_id });
+    // if (res.code === 'success') {
+    //   message.success('关注成功');
+    // }
   };
 
   const renderFollowBtn = (item: FollowType) => (
@@ -46,7 +54,7 @@ const Fans: FC<IProps> = ({ follows }) => {
       <Card title={rederTab()} bordered={false}>
         {fans &&
           fans.map(item => (
-            <div className={styles.item}>
+            <div className={styles.item} key={item.user_id}>
               <Tooltip
                 title={renderFollowBtn(item)}
                 placement="bottom"
@@ -68,8 +76,8 @@ type P = {
   follow: StateType;
 };
 
-export default Fans;
+// export default Fans;
 
-// export default connect(({ follow }: P) => ({
-//   follows: follow.follows,
-// }))(Fans);
+export default connect(({ follow }: P) => ({
+  follows: follow.follows,
+}))(Fans);

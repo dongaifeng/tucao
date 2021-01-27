@@ -13,11 +13,11 @@ import styles from '../index.less';
 
 interface PropsType {
   onChange?: (val: string) => any;
-  value?: string | undefined;
+  value?: CurrentUser['tags'];
 }
 
 // 标签组件
-const TagList: React.FC<PropsType> = ({ tags, value, onChange }) => {
+const TagList: React.FC<PropsType> = ({ value, onChange }) => {
   // 可以直接 对象类型的接口里面的某一个属性
   const ref = useRef<Input | null>(null);
   const [newTags, setNewTags] = useState<string[]>([]);
@@ -52,7 +52,7 @@ const TagList: React.FC<PropsType> = ({ tags, value, onChange }) => {
     // setNewTags(tempsTags);
     setInputVisible(false);
     setInputValue('');
-    onChange([...tempsTags].join(','));
+    onChange && onChange([...tempsTags].join(','));
   };
 
   return (

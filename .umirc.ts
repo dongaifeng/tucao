@@ -1,7 +1,7 @@
 import { defineConfig } from 'umi';
 
 export default defineConfig({
-  links: [{ rel: 'icon', href: 'favicon.png' }],
+  links: [{ rel: 'icon', href: './public/favicon.png' }],
 
   // publicPath: process.env.NODE_ENV === 'production' ? '/foo/' : '/'
 
@@ -11,6 +11,9 @@ export default defineConfig({
   // },
 
   mock: false,
+
+  // 开发环境下，可以保持组件状态，同时刷新页面 3.3以上版本
+  // fastRefresh: {},
 
   proxy: {
     '/api': {
@@ -57,6 +60,7 @@ export default defineConfig({
           exact: false,
           path: '/prefile/:userId',
           component: '@/pages/prefile/index',
+          wrappers: ['@/components/auth'], // 添加路由守卫 判断 是否有user_id
         },
         { component: '404' },
       ],

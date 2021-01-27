@@ -207,6 +207,9 @@ class ContentList extends React.Component<PropsType, TStateType> {
 
   userDetail = (userId: number) => {
     console.log(userId);
+    if (!userId) {
+      return message.info('此用户没有注册信息!');
+    }
     history.push(`/prefile/${userId}`);
   };
 

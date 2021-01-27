@@ -1,3 +1,5 @@
+@import '~antd/es/style/themes/default.less';
+
 .box {
   background-color: #fff;
   height: 100%;
@@ -6,5 +8,13 @@
     // border: 1px solid red;
     text-align: center;
     margin: 20px auto 20px;
+  }
+}
+
+.tags {
+  :global {
+    .ant-tag {
+      margin-bottom: 8px;
+    }
   }
 }

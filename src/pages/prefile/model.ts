@@ -1,7 +1,7 @@
 import { Reducer, Effect } from 'umi';
 import { CurrentUser } from '@/models/gloal';
-import { queryUserInfo } from './service';
-
+import { queryUserInfo, follow, cancelFollow } from './service';
+import { message } from 'antd';
 export interface ModalState {
   userInfo: Partial<CurrentUser>;
 }
@@ -11,6 +11,7 @@ export interface ModelType {
   state: ModalState;
   effects: {
     getUserInfo: Effect;
+    followHandle: Effect;
   };
   reducers: {
     saveUserInfo: Reducer<ModalState>;
@@ -34,13 +35,31 @@ const Model: ModelType = {
         currentUserId = localStorage.getItem('userid');
       }
 
-      // console.log(currentUserId, '<---------------------');
       const response = yield call(queryUserInfo, { ...payload, currentUserId });
 
       yield put({
         type: 'saveUserInfo',
         payload: response.data ? response.data : {},
       });
+    },
+
+    *followHandle({ payload, callback }, { call, put }) {
+      const { beFollowId, followStatus } = payload;
+      let res, msg;
+      if (followStatus) {
+        // 取消关注
+        res = yield call(cancelFollow, { beFollowId });
+        msg = '取消关注成功';
+      } else {
+        // 关注
+        res = yield call(follow, { beFollowId });
+        msg = '关注成功';
+      }
+
+      if (res.code === 'success') {
+        message.success(res.message || res);
+        if (callback) callback();
+      }
     },
   },
 
