@@ -118,6 +118,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
 
   onTabChange = (key: string) => {
     console.log(key);
+
     this.setState({ key: key, page: 1 }, () => {
       this.fetchData(this.state.size, this.state.page);
     });
@@ -243,8 +244,6 @@ class ContentList extends React.Component<PropsType, TStateType> {
         </Button>
       </div>
     );
-
-    // console.log(this.props, '<---------------');
 
     return (
       <div>

@@ -52,6 +52,10 @@ class Setting extends Component<PropsType & IStateType> {
     console.log('Failed:', errorInfo);
   };
 
+  delTag = (tag: string) => {
+    console.log(tag, '<-----tag');
+  };
+
   ProvinceChange = (value: string) => {
     console.log(value);
     this.setState({
@@ -70,9 +74,9 @@ class Setting extends Component<PropsType & IStateType> {
   componentDidMount() {
     console.log(this.props?.userInfo, 'did mount');
 
-    this.setState({
-      cities: provinces[this.props.userInfo?.province].citys,
-    });
+    // this.setState({
+    //   cities: provinces[this.props.userInfo?.province].citys,
+    // });
   }
 
   // componentDidUpdate中必须比较 props 否则会产生死循环
@@ -135,7 +139,7 @@ class Setting extends Component<PropsType & IStateType> {
               </Form.Item>
 
               <Form.Item label="我的标签" name="tags">
-                <TagList />
+                <TagList delFlag delTagHandle={this.delTag} />
               </Form.Item>
 
               <Form.Item label="居住地">

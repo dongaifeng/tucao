@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { connect } from 'umi';
 import { Input, Tag } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, CloseCircleFilled } from '@ant-design/icons';
 import { CurrentUser } from '@/models/gloal';
 import { StateType } from '@/models/user';
 import styles from '../index.less';
@@ -13,11 +13,18 @@ import styles from '../index.less';
 
 interface PropsType {
   onChange?: (val: string) => any;
+  // delTagHandle?: (val: string) => any;
   value?: CurrentUser['tags'];
+  delFlag?: boolean;
 }
 
 // 标签组件
-const TagList: React.FC<PropsType> = ({ value, onChange }) => {
+const TagList: React.FC<PropsType> = ({
+  value,
+  onChange,
+  // delTagHandle,
+  delFlag,
+}) => {
   // 可以直接 对象类型的接口里面的某一个属性
   const ref = useRef<Input | null>(null);
   const [newTags, setNewTags] = useState<string[]>([]);
@@ -55,13 +62,27 @@ const TagList: React.FC<PropsType> = ({ value, onChange }) => {
     onChange && onChange([...tempsTags].join(','));
   };
 
+  const delTagHandle = (tag: string) => {
+    let tempsTags = [...newTags];
+
+    tempsTags.splice(tempsTags.indexOf(tag), 1);
+
+    onChange && onChange([...tempsTags].join(','));
+  };
+
   return (
     <div className={styles.tags}>
-      {newTags.map((item: string, ind: number) => (
-        <Tag color="#f50" key={ind}>
-          {item}
-        </Tag>
-      ))}
+      {newTags.length > 0 &&
+        newTags.map((item: string, ind: number) => (
+          <Tag color="#f50" key={ind}>
+            {item}
+            {delFlag && (
+              <div className={styles.delTag}>
+                <CloseCircleFilled onClick={() => delTagHandle(item)} />
+              </div>
+            )}
+          </Tag>
+        ))}
       {inputVisible && (
         <Input
           ref={ref}
