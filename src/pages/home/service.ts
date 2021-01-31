@@ -6,6 +6,12 @@ export async function queryList(params: any) {
   });
 }
 
+export async function queryFollowList(params: any) {
+  return request('/api/article/follow', {
+    params,
+  });
+}
+
 export async function queryUser(params: any) {
   return request('/api/getUser', {
     params,

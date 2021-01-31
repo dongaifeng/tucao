@@ -8,6 +8,7 @@ import {
 import styles from '../index.less';
 
 import { ModalState } from '../model';
+import Icon from '@/components/Icon';
 
 interface PropType {
   info: ModalState['userInfo'];
@@ -27,17 +28,18 @@ const UserCard: FC<PropType> = ({ info }) => {
 
       <div className={styles.detail}>
         <p>
-          <PhoneOutlined style={{ marginRight: 8 }} />
+          <Icon icon={PhoneOutlined} alt="手机号" />
+
           {info.phone}
         </p>
 
         <p>
-          <MailOutlined style={{ marginRight: 8 }} />
+          <Icon icon={MailOutlined} alt="邮箱" />
           {info.email}
         </p>
 
         <p>
-          <EnvironmentOutlined style={{ marginRight: 8 }} />
+          <Icon icon={EnvironmentOutlined} alt="地址" />
           {info.country}
           {info.address && `-${info.address}`}
         </p>

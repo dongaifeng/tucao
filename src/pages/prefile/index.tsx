@@ -10,12 +10,13 @@ import TagList from '@/pages/setting/components/TagList';
 import { ModalState } from './model';
 import { addTags } from './service';
 
-const operationTabList = [
+const operationTabList = (userInfo: ModalState['userInfo']) => [
   {
     key: 'tucao',
     tab: (
       <span>
-        吐槽 <span style={{ fontSize: 14 }}>(8)</span>
+        吐槽{' '}
+        <span style={{ fontSize: 14 }}>({userInfo.articleCount || 0})</span>
       </span>
     ),
   },
@@ -23,7 +24,7 @@ const operationTabList = [
     key: 'articles',
     tab: (
       <span>
-        鸡汤 <span style={{ fontSize: 14 }}>(8)</span>
+        鸡汤 <span style={{ fontSize: 14 }}>(0)</span>
       </span>
     ),
   },
@@ -48,7 +49,7 @@ class Prefile extends Component<PropsType, TStateType> {
       return <TucaoList />;
     }
     if (tabKey === 'articles') {
-      return '3333';
+      return '没有鸡汤';
     }
     return null;
   };
@@ -67,7 +68,7 @@ class Prefile extends Component<PropsType, TStateType> {
     // const { match } = this.props;
     // router.push(`${match.url}/${key}`);
     this.setState({
-      tabKey: key as CenterState['tabKey'],
+      tabKey: key as string,
     });
   };
 
@@ -138,7 +139,7 @@ class Prefile extends Component<PropsType, TStateType> {
           <Col lg={17} md={24}>
             <Card
               className={styles.tabsCard}
-              tabList={operationTabList}
+              tabList={operationTabList(userInfo)}
               activeTabKey={tabKey}
               onTabChange={this.onTabChange}
             >

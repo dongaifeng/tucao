@@ -1,6 +1,6 @@
 import { Effect, Reducer } from 'umi';
-import { ListItemDataType, CommentType } from './data.d';
-import { CurrentUser } from '@/models/gloal';
+import { CommentType } from './data.d';
+import { ArticleType, CurrentUser } from '@/models/gloal';
 import {
   queryList,
   queryUser,
@@ -9,12 +9,13 @@ import {
   like,
   queryComment,
   createComment,
+  queryFollowList,
 } from './service';
 import { message } from 'antd';
 
 export interface StateType {
-  list: ListItemDataType[];
-  recommend: ListItemDataType[];
+  list: ArticleType[];
+  recommend: ArticleType[];
   currentUser: Partial<CurrentUser>;
   likeArticles: number[];
   comments: CommentType[];
@@ -63,7 +64,10 @@ const Model: ModelType = {
   },
   effects: {
     *fetchData({ payload }, { call, put }) {
-      const { data } = yield call(queryList, payload);
+      const { key, ...query } = payload;
+      const api = key === 'tab1' ? queryList : queryFollowList;
+
+      const { data } = yield call(api, query);
 
       yield put({
         type: 'queryList',

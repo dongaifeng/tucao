@@ -3,10 +3,12 @@ import logo from '@/assets/nouser.png';
 import { connect, Dispatch, history, Link } from 'umi';
 
 import { Divider, Menu } from 'antd';
-import { HomeOutlined, SmileTwoTone } from '@ant-design/icons';
+import { HomeOutlined } from '@ant-design/icons';
 import styles from './index.less';
-import { User } from '../../data.d';
+import { CurrentUser } from '@/models/gloal';
+
 import { StateType } from '../../model';
+import Icon from '@/components/Icon';
 
 const menu: { [key: string]: string } = {
   follow: '我的关注',
@@ -16,7 +18,7 @@ const menu: { [key: string]: string } = {
 
 type SelectType = 'follow' | 'fans' | 'collect';
 interface PropsType {
-  currentUser: Partial<User>;
+  currentUser: Partial<CurrentUser>; // Partial将属性变成 可无项
   dispatch: Dispatch;
 }
 
@@ -24,11 +26,16 @@ const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
   const { name, country, avatar, introduce } = currentUser;
   const ImgDom = useRef<HTMLImageElement | null>(null);
 
+  useEffect(() => {
+    avatarError();
+  }, [avatar]);
+
   const selectKey = (key: SelectType) => {
     history.push(`/${key}`);
   };
 
   const avatarError = () => {
+    console.log('3333');
     if (ImgDom && ImgDom.current) {
       ImgDom.current.src = logo;
     }
@@ -55,11 +62,7 @@ const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
       <div className={styles.sign}>{introduce}</div>
 
       <p>
-        <HomeOutlined
-          style={{
-            marginRight: 8,
-          }}
-        />
+        <Icon icon={HomeOutlined} alt="位置" />
         {country}
       </p>
 

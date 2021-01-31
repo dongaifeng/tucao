@@ -1,20 +1,6 @@
 import React, { Component, useRef, useState } from 'react';
 import { connect, Dispatch } from 'umi';
-import {
-  Form,
-  Input,
-  Button,
-  Select,
-  Row,
-  Col,
-  Avatar,
-  Upload,
-  message,
-  Tag,
-} from 'antd';
-import ImgCrop from 'antd-img-crop';
-import { UserOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons';
-import { CurrentUser } from '@/models/gloal';
+import { Form, Input, Button, Select, Row, Col } from 'antd';
 import { StateType } from '@/models/user';
 import areaData from './areaData';
 import PageLoading from '@/components/PageLoading';
@@ -44,43 +30,6 @@ const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 
-// const props = {
-//   name: 'file',
-//   action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-//   headers: {
-//     authorization: 'authorization-text',
-//   },
-//   onChange(info) {
-//     if (info.file.status !== 'uploading') {
-//       console.log(info.file, info.fileList);
-//     }
-//     if (info.file.status === 'done') {
-//       message.success(`${info.file.name} file uploaded successfully`);
-//     } else if (info.file.status === 'error') {
-//       message.error(`${info.file.name} file upload failed.`);
-//     }
-//   },
-// };
-
-// 头像组件
-// const AvatarView = ({ avatar }: { avatar: string }) => (
-//   <div className={styles.avatarBox}>
-//     <Avatar src={avatar} size={64} icon={<UserOutlined />} />
-
-//     <div style={{ marginTop: '20px', }} >
-//       <ImgCrop rotate>
-//         <Upload
-
-//         >
-//           <Button type="primary" ghost icon={<UploadOutlined />}>
-//             上传头像
-//           </Button>
-//         </Upload>
-//       </ImgCrop>
-//     </div>
-//   </div>
-// );
-
 class Setting extends Component<PropsType & IStateType> {
   state: IStateType = {
     cities: {},
@@ -91,7 +40,8 @@ class Setting extends Component<PropsType & IStateType> {
   onFinish = (values: any) => {
     console.log('Success:', values);
     const { dispatch } = this.props;
-    const country = `${this.state.provinces}-${this.state.city}`;
+    const { provinces = '', city = '' } = this.state;
+    const country = `${provinces}-${city}`;
     dispatch({
       type: 'user/modifyUser',
       payload: { country, ...values },
@@ -119,13 +69,17 @@ class Setting extends Component<PropsType & IStateType> {
 
   componentDidMount() {
     console.log(this.props?.userInfo, 'did mount');
+
+    this.setState({
+      cities: provinces[this.props.userInfo?.province].citys,
+    });
   }
 
   // componentDidUpdate中必须比较 props 否则会产生死循环
   componentDidUpdate(prevProps: PropsType) {
     console.log(this.props?.userInfo, 'componentDidUpdate');
 
-    if (this.props.userInfo !== prevProps.userInfo && this.props.userInfo) {
+    if (this.props.userInfo && this.props.userInfo !== prevProps.userInfo) {
       this.setState({
         cities: provinces[this.props.userInfo.province].citys,
       });

@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useRef } from 'react';
 import { Card, List, Button, message } from 'antd';
-import { Link, connect, Dispatch } from 'umi';
+import { Link, connect, Dispatch, useParams } from 'umi';
 import {
   UploadOutlined,
   StarOutlined,
@@ -13,23 +13,20 @@ import {
 import styles from '../index.less';
 import { ModalState } from '../model';
 import CommentList from '@/pages/home/conponents/CommentList';
-import { CurrentUser } from '@/models/gloal';
+import { CurrentUser, ArticleType } from '@/models/gloal';
+import { CommentType } from '@/pages/home/data';
 import { queryTucao } from '../service';
+import { like, queryComment } from '@/pages/home/service';
 
-interface CollectType {
-  title?: string | undefined;
-  content: string;
-  owner_name: string;
-  owner: number;
-  create_date: string;
-  id: number;
-  cancelFlag?: boolean;
-}
-
-interface IProps {
-  dispatch: Dispatch;
-  currentUser: CurrentUser;
-}
+// interface ArticleType {
+//   title?: string | undefined;
+//   content: string;
+//   owner_name: string;
+//   owner: number;
+//   create_date: string;
+//   id: number;
+//   cancelFlag?: boolean;
+// }
 
 interface TPType {
   icon: React.ReactNode | any;
@@ -45,110 +42,85 @@ const IconText: FC<TPType> = ({ icon, text, onClick }) => {
   );
 };
 
-const TucaoList: FC<IProps> = ({ dispatch, currentUser, userInfo }) => {
-  const [dataList, setDataList] = useState<CollectType[]>([]);
+interface IProps {
+  dispatch: Dispatch;
+  currentUser: CurrentUser;
+  user_id: number;
+}
+
+const TucaoList: FC<IProps> = ({ dispatch, currentUser, user_id }) => {
+  const [dataList, setDataList] = useState<ArticleType[]>([]);
+  const [likeArticles, setLikeArticles] = useState<number[]>([]);
+  const [comments, setComments] = useState<CommentType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [initLoading, setInitLoading] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
+  const pageRef = useRef(1);
+  const [page, setPage] = useState<number>(pageRef.current);
   const [size, setSize] = useState<number>(10);
-  const [showCommentId, setShowCommentId] = useState<number>(0);
+  const [showCommentId, setShowCommentId] = useState<number | undefined>(0);
+  const params = useParams();
+
+  const getData = (size: Number, page: number) => {
+    queryTucao({ ...params, size, page }).then(res => {
+      setDataList(res.data);
+    });
+  };
 
   useEffect(() => {
-    queryTucao({ userId: userInfo.user_id || 57 }).then(res => {
-      const data = res.data.map((item: CollectType) => ({
-        ...item,
-        cancelFlag: false,
-      }));
-      setDataList(data);
-    });
+    getData(size, page);
   }, []);
 
-  const cancelCollect = async (item: CollectType) => {
+  // 点击更多按钮，无法获取最新page，故使用useRef方法
+  const onLoadMore = () => {
+    setLoading(true);
+    pageRef.current = page + 1;
+    setPage(pageRef.current);
+    queryTucao({ ...params, size, page: pageRef.current }).then(res => {
+      const old = dataList;
+      setDataList([...dataList, ...res.data]);
+      setLoading(false);
+    });
+  };
+
+  // 收藏此条文章，
+  const collectHandle = (item: ArticleType) => {
     console.log(item);
 
     dispatch({
       type: 'home/collect',
       payload: { id: item.id },
       callback: () => {
-        const newData = dataList.map(i => {
-          if (i.id === item.id) {
-            return { ...i, cancelFlag: !i.cancelFlag };
-          }
-          return i;
-        });
-        setDataList(newData);
+        getData(page * size, 1);
       },
     });
   };
 
-  const renderFollowBtn = (item: CollectType) => (
-    <Button
-      style={{ color: item.cancelFlag ? '' : '#ccc' }}
-      onClick={() => cancelCollect(item)}
-      type="link"
-      size="small"
-    >
-      {item.cancelFlag ? '重新收藏' : '取消收藏'}
-    </Button>
-  );
+  // 给文章点赞
+  const likeHandle = async (item: ArticleType) => {
+    if (likeArticles.includes(item.id)) {
+      return message.info('已经点赞，不可重复点赞！');
+    }
+    const old = likeArticles;
+    setLikeArticles([...old, item.id]);
 
-  const onLoadMore = () => {
-    setLoading(true);
-
-    dispatch({
-      type: 'home/loadMore',
-      payload: { size, page },
-
-      callback: () => {
-        setLoading(false);
-        setPage(page + 1);
-      },
-    });
+    const res = await like({ id: item.id });
+    if (res.code === 'success') {
+      message.success(res.message || '成功');
+      getData(page * size, 1);
+    }
   };
 
-  const collectHandle = (item: ListItemDataType) => {
-    // console.log(item);
-    // const { page, size } = this.state;
-    // this.props.dispatch({
-    //   type: 'home/collect',
-    //   payload: { id: item.id },
-    //   callback: () => {
-    //     this.fetchData(page * size, 1);
-    //   },
-    // });
-  };
+  // 点开评论
+  const commentHandle = async (item: ArticleType) => {
+    console.log(item);
+    if (showCommentId !== item.id) {
+      const { data } = await queryComment({ articleId: item.id });
+      setComments(data);
 
-  const likeHandle = (item: ListItemDataType) => {
-    // const { page, size } = this.state;
-    // if (this.props.likeArticles.includes(item.id)) {
-    //   return message.info('已经点赞，不可重复点赞！');
-    // }
-    // this.props.dispatch({
-    //   type: 'home/like',
-    //   payload: { id: item.id },
-    //   callback: () => {
-    //     this.fetchData(page * size, 1);
-    //   },
-    // });
-  };
-
-  const commentHandle = (item: ListItemDataType) => {
-    // const { showCommentId } = this.state;
-    // const { dispatch } = this.props;
-    // console.log(item);
-    // if (showCommentId !== item.id) {
-    //   dispatch({
-    //     type: 'home/featchComment',
-    //     payload: { articleId: item.id },
-    //   });
-    //   this.setState({
-    //     showCommentId: item.id,
-    //   });
-    // } else {
-    //   this.setState({
-    //     showCommentId: undefined,
-    //   });
-    // }
+      setShowCommentId(item.id);
+    } else {
+      setShowCommentId(undefined);
+    }
   };
 
   const loadMore = !initLoading && (
@@ -167,13 +139,11 @@ const TucaoList: FC<IProps> = ({ dispatch, currentUser, userInfo }) => {
   );
 
   return (
-    <div className={styles.box}>
+    <div>
       <List
         itemLayout="vertical"
         loadMore={loadMore}
         loading={initLoading}
-        // header={<div>头部</div>}
-        footer={<div>底部</div>}
         dataSource={dataList}
         renderItem={item => (
           <>
@@ -192,18 +162,18 @@ const TucaoList: FC<IProps> = ({ dispatch, currentUser, userInfo }) => {
                   key="list-vertical-star-o"
                   onClick={() => collectHandle(item)}
                 />,
-                // <IconText
-                //   icon={
-                //     likeArticles.indexOf(item.id) === -1 ? (
-                //       <LikeOutlined />
-                //     ) : (
-                //       <LikeFilled className={styles.iconActive} />
-                //     )
-                //   }
-                //   text={item.likes}
-                //   key="list-vertical-like-o"
-                //   onClick={() => likeHandle(item)}
-                // />,
+                <IconText
+                  icon={
+                    likeArticles.indexOf(item.id) === -1 ? (
+                      <LikeOutlined />
+                    ) : (
+                      <LikeFilled className={styles.iconActive} />
+                    )
+                  }
+                  text={item.likes}
+                  key="list-vertical-like-o"
+                  onClick={() => likeHandle(item)}
+                />,
                 <IconText
                   icon={
                     showCommentId === item.id ? (
@@ -218,10 +188,15 @@ const TucaoList: FC<IProps> = ({ dispatch, currentUser, userInfo }) => {
                 />,
               ]}
             >
-              <List.Item.Meta description={'发布时间：' + item.updatedAt} />
               <span>{item.content}</span>
+              <div>{'发布时间：' + item.updatedAt || ''} </div>
             </List.Item>
-            {item.id === showCommentId ? <CommentList /> : null}
+            {item.id === showCommentId ? (
+              <CommentList
+                _comments={comments as CommentType[]}
+                activeArticleId={showCommentId}
+              />
+            ) : null}
           </>
         )}
       />
@@ -235,7 +210,7 @@ type P = {
 };
 
 export default connect(({ prefile, home }: P) => ({
-  userInfo: prefile.userInfo,
+  user_id: prefile.userInfo.user_id,
   currentUser: home.currentUser,
   likeArticles: home.likeArticles,
 }))(TucaoList);

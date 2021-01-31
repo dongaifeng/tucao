@@ -1,26 +1,26 @@
-export interface ListItemDataType {
-  id: number;
-  owner: number;
-  title: string;
-  avatar: string;
-  ownerName: string;
-  status: 'normal' | 'exception' | 'active' | 'success';
-  percent: number;
-  logo: string;
-  href: string;
-  body?: any;
-  updatedAt: string;
-  createdAt: string;
-  subDescription: string;
-  description: string;
-  activeUser: number;
-  newUser: number;
-  star: number[];
-  likes: number;
-  comments: number;
-  content: string;
-  members: Member[];
-}
+// export interface ListItemDataType {
+//   id: number;
+//   owner: number;
+//   title: string;
+//   avatar: string;
+//   ownerName: string;
+//   status: 'normal' | 'exception' | 'active' | 'success';
+//   percent: number;
+//   logo: string;
+//   href: string;
+//   body?: any;
+//   updatedAt: string;
+//   createdAt: string;
+//   subDescription: string;
+//   description: string;
+//   activeUser: number;
+//   newUser: number;
+//   star: number[];
+//   likes: number;
+//   comments: number;
+//   content: string;
+//   members: Member[];
+// }
 
 // export interface User {
 //   name: string;

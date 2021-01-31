@@ -1,12 +1,10 @@
 import React, { FC, useState } from 'react';
 import { connect, Dispatch } from 'umi';
-import { Comment, message, Form, Button, List, Input, Tooltip } from 'antd';
+import { Comment, Form, Button, List, Input, Tooltip } from 'antd';
 import moment from 'moment';
-import {} from '@ant-design/icons';
 import nouser from '@/assets/nouser.png';
 import styles from './index.less';
 import { StateType } from '../../model';
-import { createComment } from '../../service';
 
 moment.locale('zh-cn');
 const { TextArea } = Input;

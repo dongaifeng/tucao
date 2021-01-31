@@ -17,8 +17,8 @@ import CommentList from './conponents/CommentList';
 import styles from './index.less';
 
 import { StateType } from './model';
-import { ListItemDataType } from './data.d';
-import { CurrentUser } from '@/models/gloal';
+import { ArticleType, CurrentUser } from '@/models/gloal';
+import { PageLoading } from '@ant-design/pro-layout';
 
 interface TStateType {
   loading: boolean;
@@ -31,10 +31,11 @@ interface TStateType {
 }
 interface PropsType {
   dispatch: Dispatch;
-  list: ListItemDataType[];
-  recommend: ListItemDataType[];
-  currentUser: CurrentUser;
+  list: ArticleType[];
+  recommend: ArticleType[];
+  currentUser: Partial<CurrentUser>;
   likeArticles: StateType['likeArticles'];
+  loadFlag: boolean;
 }
 
 interface TPType {
@@ -78,7 +79,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
 
     dispatch({
       type: 'home/fetchData',
-      payload: { size, page },
+      payload: { size, page, key: this.state.key },
     });
 
     this.setState({
@@ -87,6 +88,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
     });
   };
 
+  // 推荐阅读，选取点赞数最多的前7
   fetchRecommend = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -95,7 +97,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
     });
   };
 
-  renderRight = (recommend: ListItemDataType[]) => (
+  renderRight = (recommend: ArticleType[]) => (
     <div>
       <Card
         title="推荐阅读"
@@ -116,9 +118,9 @@ class ContentList extends React.Component<PropsType, TStateType> {
 
   onTabChange = (key: string) => {
     console.log(key);
-    this.setState({ key: key });
-    const a = key === 'tab2' ? 1 : 10;
-    this.fetchData(a);
+    this.setState({ key: key, page: 1 }, () => {
+      this.fetchData(this.state.size, this.state.page);
+    });
   };
 
   publish = () => {
@@ -136,7 +138,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
     });
   };
 
-  collectHandle = (item: ListItemDataType) => {
+  collectHandle = (item: ArticleType) => {
     console.log(item);
     const { page, size } = this.state;
     this.props.dispatch({
@@ -148,7 +150,8 @@ class ContentList extends React.Component<PropsType, TStateType> {
     });
   };
 
-  likeHandle = (item: ListItemDataType) => {
+  // 点赞 只能加赞，不能取消，只能点一次
+  likeHandle = (item: ArticleType) => {
     const { page, size } = this.state;
 
     if (this.props.likeArticles.includes(item.id)) {
@@ -164,7 +167,8 @@ class ContentList extends React.Component<PropsType, TStateType> {
     });
   };
 
-  commentHandle = (item: ListItemDataType) => {
+  // 评论
+  commentHandle = (item: ArticleType) => {
     const { showCommentId } = this.state;
     const { dispatch } = this.props;
     console.log(item);
@@ -185,6 +189,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
     }
   };
 
+  // 加载更多
   onLoadMore = () => {
     const { page, size } = this.state;
 
@@ -205,6 +210,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
     });
   };
 
+  // 用户详情，判断是不是注册用户，非注册用户不可点击
   userDetail = (userId: number) => {
     console.log(userId);
     if (!userId) {
@@ -221,7 +227,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
 
   render() {
     const { initLoading, loading, key, showCommentId } = this.state;
-    const { list, recommend, currentUser, likeArticles } = this.props;
+    const { list, recommend, currentUser, likeArticles, loadFlag } = this.props;
 
     const loadMore = !initLoading && (
       <div
@@ -279,7 +285,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
                 <List
                   itemLayout="vertical"
                   loadMore={loadMore}
-                  loading={initLoading}
+                  loading={loadFlag}
                   // header={<div>头部</div>}
                   footer={<div>底部</div>}
                   dataSource={list}
@@ -359,9 +365,18 @@ class ContentList extends React.Component<PropsType, TStateType> {
   }
 }
 
-export default connect(({ home }: { home: StateType }) => ({
-  list: home.list,
-  recommend: home.recommend,
-  currentUser: home.currentUser,
-  likeArticles: home.likeArticles,
-}))(ContentList);
+export default connect(
+  ({
+    home,
+    loading,
+  }: {
+    home: StateType;
+    loading: { effects: { [key: string]: boolean } };
+  }) => ({
+    list: home.list,
+    recommend: home.recommend,
+    currentUser: home.currentUser,
+    likeArticles: home.likeArticles,
+    loadFlag: loading.effects['home/fetchData'],
+  }),
+)(ContentList);
