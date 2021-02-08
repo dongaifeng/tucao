@@ -12,9 +12,11 @@ const { TextArea } = Input;
 const CommentComp = ({
   comments,
   loading,
+  userDetail,
 }: {
   comments: StateType['comments'];
   loading: boolean;
+  userDetail: (id: number) => void;
 }) => (
   <List
     dataSource={comments}
@@ -25,7 +27,14 @@ const CommentComp = ({
       <Comment
         avatar={item.avatar || nouser}
         content={item.content}
-        author={item.author || 'TA不想有名字'}
+        author={
+          <Button
+            style={{ border: 0 }}
+            onClick={() => userDetail(item.userId as number)}
+          >
+            {item.author || 'TA不想有名字'}
+          </Button>
+        }
         datetime={
           <Tooltip
             title={moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss')}
@@ -70,17 +79,19 @@ const Editor: FC<EditorPropType> = ({
 );
 
 interface PropType {
-  _comments: StateType['comments'];
+  list: StateType['comments'];
   activeArticleId: StateType['activeArticleId'];
   loading: boolean;
   dispatch: Dispatch;
+  userDetail: (id: number) => void;
 }
 
 const CommentList: FC<PropType> = ({
-  _comments,
+  list,
   loading,
   activeArticleId,
   dispatch,
+  userDetail,
 }) => {
   // const [comments, setComments] = useState(data);
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -110,7 +121,13 @@ const CommentList: FC<PropType> = ({
 
   return (
     <div className={styles.commentBox}>
-      {12 && <CommentComp comments={_comments} loading={loading} />}
+      {12 && (
+        <CommentComp
+          comments={list}
+          loading={loading}
+          userDetail={userDetail}
+        />
+      )}
 
       <Comment
         content={

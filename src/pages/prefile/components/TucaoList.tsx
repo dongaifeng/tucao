@@ -193,7 +193,7 @@ const TucaoList: FC<IProps> = ({ dispatch, currentUser, user_id }) => {
             </List.Item>
             {item.id === showCommentId ? (
               <CommentList
-                _comments={comments as CommentType[]}
+                list={comments as CommentType[]}
                 activeArticleId={showCommentId}
               />
             ) : null}

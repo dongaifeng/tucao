@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Card, Avatar, Tooltip, Button, message } from 'antd';
-import { Link, connect, Dispatch } from 'umi';
+import { Link, connect, Dispatch, history } from 'umi';
 import { UserOutlined } from '@ant-design/icons';
 import styles from './fans.less';
 import { FollowType } from '../follow/data.d';
@@ -38,6 +38,15 @@ const Fans: FC<IProps> = ({ follows, dispatch }) => {
     // }
   };
 
+  // 用户详情，判断是不是注册用户，非注册用户不可点击
+  const userDetail = (userId: number) => {
+    console.log(userId);
+    if (!userId) {
+      return message.info('此用户没有注册信息!');
+    }
+    history.push(`/prefile/${userId}`);
+  };
+
   const renderFollowBtn = (item: FollowType) => (
     <Button
       onClick={() => followHandle(item)}
@@ -60,11 +69,16 @@ const Fans: FC<IProps> = ({ follows, dispatch }) => {
                 placement="bottom"
                 color="pink"
               >
-                <Link to="">
+                <Link to={`/prefile/${item.user_id}`}>
                   <Avatar icon={<UserOutlined />} size={60} src={item.avatar} />
                 </Link>
               </Tooltip>
-              <div className={styles.name}>{item.user_name}</div>
+              <div
+                onClick={() => userDetail(item.user_id)}
+                className={styles.name}
+              >
+                {item.user_name}
+              </div>
             </div>
           ))}
       </Card>

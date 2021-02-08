@@ -27,7 +27,7 @@ const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
   const ImgDom = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
-    avatarError();
+    // avatarError();
   }, [avatar]);
 
   const selectKey = (key: SelectType) => {

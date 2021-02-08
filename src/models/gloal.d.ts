@@ -17,8 +17,8 @@ export interface CurrentUser {
   phone: string;
   country: string;
   address: string;
-  province?: String | undefined;
-  city?: String | undefined;
+  province: String | undefined;
+  city: String | undefined;
   introduce?: String | undefined;
   tags?: String | undefined;
 }
@@ -28,7 +28,7 @@ export interface ArticleType {
   owner: number;
   title: string;
   avatar: string;
-  ownerName: string;
+  owner_name: string;
   status: 'normal' | 'exception' | 'active' | 'success';
   percent: number;
   logo: string;

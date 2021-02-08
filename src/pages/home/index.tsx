@@ -126,10 +126,19 @@ class ContentList extends React.Component<PropsType, TStateType> {
 
   publish = () => {
     console.log(this.state.pubVal);
+    const { pubVal, page, size } = this.state;
     const { dispatch } = this.props;
+    if (!pubVal || pubVal === '') {
+      return message.info('你总得吐槽点东西吧');
+    }
     dispatch({
       type: 'home/publish',
-      payload: { content: this.state.pubVal },
+      payload: { content: pubVal },
+      callback: () => {
+        this.fetchData(size, 1);
+        this.setState({ pubVal: '' });
+        message.success('发布吐槽成功');
+      },
     });
   };
 
@@ -227,7 +236,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
   }
 
   render() {
-    const { initLoading, loading, key, showCommentId } = this.state;
+    const { initLoading, loading, key, showCommentId, pubVal } = this.state;
     const { list, recommend, currentUser, likeArticles, loadFlag } = this.props;
 
     const loadMore = !initLoading && (
@@ -259,7 +268,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
                   <Input.TextArea
                     style={{ resize: 'none' }}
                     onChange={e => this.pubChange(e.target.value)}
-                    // value={pubVal}
+                    value={pubVal}
                     placeholder="吐槽一下今天不开心的事吧..."
                     autoSize={{ minRows: 3, maxRows: 3 }}
                   />
@@ -340,14 +349,16 @@ class ContentList extends React.Component<PropsType, TStateType> {
                               style={{ border: 0 }}
                               onClick={() => this.userDetail(item.owner)}
                             >
-                              {item.ownerName || 'TA不想有名字'}
+                              {item.owner_name || 'TA不想有名字'}
                             </Button>
                           }
                           description={'发布时间：' + item.updatedAt}
                         />
                         <span>{item.content}</span>
                       </List.Item>
-                      {item.id === showCommentId ? <CommentList /> : null}
+                      {item.id === showCommentId ? (
+                        <CommentList userDetail={this.userDetail} />
+                      ) : null}
                     </>
                   )}
                 />

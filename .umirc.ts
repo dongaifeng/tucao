@@ -1,9 +1,9 @@
 import { defineConfig } from 'umi';
 
 export default defineConfig({
-  links: [{ rel: 'icon', href: './public/favicon.png' }],
+  links: [{ rel: 'icon', href: 'favicon.png' }],
 
-  // publicPath: process.env.NODE_ENV === 'production' ? '/foo/' : '/'
+  publicPath: process.env.NODE_ENV === 'production' ? '/public' : '/',
 
   // 配置前端服务项， 低于.env文件优先级
   // devServer: {

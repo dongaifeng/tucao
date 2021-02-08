@@ -82,9 +82,10 @@ const PageHeader: FC<PropsType> = ({ dispatch, userInfo, status }) => {
 
 type P = {
   user: StateType;
+  home: any;
 };
 
-export default connect(({ user }: P) => ({
+export default connect(({ user, home }: P) => ({
   status: user.status,
-  userInfo: user.userInfo,
+  userInfo: home.currentUser,
 }))(PageHeader);

@@ -47,10 +47,13 @@ const Model: UserModelType = {
   effects: {
     *register({ payload }, { put, call }) {
       const res = yield call(register, payload);
-      yield put({
-        type: 'saveRegister',
-        payload: res || {},
-      });
+      if (res.code === 'success') {
+        // message.success(res.data.name + '恭喜您，注册成功');
+        yield put({
+          type: 'saveRegister',
+          payload: res.data || {},
+        });
+      }
     },
 
     *login({ payload, callback }, { put, call }) {
@@ -93,6 +96,7 @@ const Model: UserModelType = {
       const res = yield call(modifyUser, payload);
       if (res.code === 'success') {
         message.success(`${res.data.name}, 恭喜您修改信息成功！`);
+        history.push('/');
       }
     },
   },

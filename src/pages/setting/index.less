@@ -20,12 +20,19 @@
     }
   }
 
+  .tagBtn {
+    &:hover .delTag {
+      display: inline;
+    }
+  }
+
   .delTag {
     position: absolute;
     top: -12px;
     right: -8px;
-    color: #333;
+    color: #ccc;
     font-size: 13px;
     cursor: pointer;
+    display: none;
   }
 }

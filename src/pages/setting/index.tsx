@@ -1,6 +1,7 @@
 import React, { Component, useRef, useState } from 'react';
 import { connect, Dispatch } from 'umi';
-import { Form, Input, Button, Select, Row, Col } from 'antd';
+import { Form, Input, Button, Select, Row, Col, message } from 'antd';
+import { FormInstance } from 'antd/lib/form';
 import { StateType } from '@/models/user';
 import areaData from './areaData';
 import PageLoading from '@/components/PageLoading';
@@ -15,8 +16,9 @@ interface PropsType {
 }
 interface IStateType {
   cities: { [propName: string]: any };
-  provinces: string | undefined;
-  city: string | undefined;
+  provinceName: string | undefined;
+  cityName: string | undefined;
+  changed: boolean;
 }
 
 const provinces = areaData.provinces;
@@ -33,50 +35,79 @@ const tailLayout = {
 class Setting extends Component<PropsType & IStateType> {
   state: IStateType = {
     cities: {},
-    provinces: undefined,
-    city: undefined,
+    provinceName: undefined,
+    cityName: undefined,
+    changed: false,
   };
+  formRef = React.createRef<FormInstance>();
 
+  // 提交数据： 验证有没有修改过资料， 没有则不请求
+  // 需要组装 country 字段，方便首页展示
   onFinish = (values: any) => {
     console.log('Success:', values);
+    const { provinceName = '', cityName = '', changed } = this.state;
     const { dispatch } = this.props;
-    const { provinces = '', city = '' } = this.state;
-    const country = `${provinces}-${city}`;
+    const country = `${provinceName}-${cityName}`;
+
+    if (!changed) {
+      return message.info('您并没有修改任何信息');
+    }
+
     dispatch({
       type: 'user/modifyUser',
       payload: { country, ...values },
     });
+
+    this.setState({ changed: false });
   };
 
   onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
+  };
+  onFormChange = (changedValues: any) => {
+    this.setState({ changed: true });
   };
 
   delTag = (tag: string) => {
     console.log(tag, '<-----tag');
   };
 
+  // 省份改变时：重置 城市下拉框，清空表单city字段，给provinceName赋值
   ProvinceChange = (value: string) => {
     console.log(value);
+    this.formRef.current!.setFieldsValue({
+      city: undefined,
+    });
+
     this.setState({
       cities: provinces[value].citys,
-      provinces: provinces[value].name,
+      provinceName: provinces[value].name,
     });
   };
 
   CityChange = (value: string) => {
     console.log(value);
     this.setState((state: IStateType, props) => ({
-      city: state.cities[value].name,
+      cityName: state.cities[value].name,
     }));
   };
 
+  initData = () => {
+    if (this.props.userInfo) {
+      const { province, city } = this.props.userInfo;
+
+      this.setState({
+        cities: provinces[province].citys,
+        cityName: provinces[province].citys[city].name,
+        provinceName: provinces[province].name,
+      });
+    }
+  };
+
+  // 组件挂在后 根据用户的 省份code 获取 城市的列表
   componentDidMount() {
     console.log(this.props?.userInfo, 'did mount');
-
-    // this.setState({
-    //   cities: provinces[this.props.userInfo?.province].citys,
-    // });
+    this.initData();
   }
 
   // componentDidUpdate中必须比较 props 否则会产生死循环
@@ -84,9 +115,7 @@ class Setting extends Component<PropsType & IStateType> {
     console.log(this.props?.userInfo, 'componentDidUpdate');
 
     if (this.props.userInfo && this.props.userInfo !== prevProps.userInfo) {
-      this.setState({
-        cities: provinces[this.props.userInfo.province].citys,
-      });
+      this.initData();
     }
   }
 
@@ -106,13 +135,14 @@ class Setting extends Component<PropsType & IStateType> {
         <Row justify="center">
           <Col span={10}>
             <AvatarView avatar={userInfo.avatar || ''} />
-
             <Form
+              ref={this.formRef}
               {...layout}
               name="basic"
               initialValues={userInfo}
               onFinish={this.onFinish}
               onFinishFailed={this.onFinishFailed}
+              onValuesChange={this.onFormChange}
             >
               <Form.Item
                 label="昵称"
@@ -125,7 +155,7 @@ class Setting extends Component<PropsType & IStateType> {
               </Form.Item>
 
               <Form.Item name="email" label="邮箱">
-                <Input />
+                <Input disabled />
               </Form.Item>
 
               <Form.Item

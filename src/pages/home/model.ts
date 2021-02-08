@@ -136,12 +136,12 @@ const Model: ModelType = {
       });
     },
 
-    *publish({ payload }, { call, select }) {
+    *publish({ payload, callback }, { call, select }) {
       const currentUser = yield select((state: any) => state.home.currentUser);
       const res = yield call(publish, { ...payload, ...currentUser });
       console.log(res, '<------');
-      if (res.code === 2000) {
-        message.success('发表成功！');
+      if (res.code === 'success') {
+        if (callback) callback();
       }
     },
 

@@ -2,7 +2,6 @@ import React, { FC, useEffect } from 'react';
 import { Dispatch, connect, history } from 'umi';
 import { List, Avatar, Button, Card, message } from 'antd';
 import styles from './index.less';
-import { follow, cancelFollow } from './service';
 
 import { StateType } from './model';
 import { FollowType } from './data.d';
@@ -64,6 +63,15 @@ const Follow: FC<IProps> = ({ dispatch, follows }) => {
     // }
   };
 
+  // 用户详情，判断是不是注册用户，非注册用户不可点击
+  const userDetail = (userId: number) => {
+    console.log(userId);
+    if (!userId) {
+      return message.info('此用户没有注册信息!');
+    }
+    history.push(`/prefile/${userId}`);
+  };
+
   return (
     <div className={styles.box}>
       <Card title={rederTab()} bordered={false}>
@@ -85,7 +93,14 @@ const Follow: FC<IProps> = ({ dispatch, follows }) => {
             >
               <List.Item.Meta
                 avatar={<Avatar shape="square" size={50} src={item.avatar} />}
-                title={item.user_name}
+                title={
+                  <Button
+                    style={{ border: 0 }}
+                    onClick={() => userDetail(item.user_id)}
+                  >
+                    {item.user_name || 'TA不想有名字'}
+                  </Button>
+                }
                 description={item.introduce}
               />
             </List.Item>

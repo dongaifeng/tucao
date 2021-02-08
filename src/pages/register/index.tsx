@@ -87,22 +87,23 @@ const Register: FC<PageType> = ({ dispatch, status, userInfo }) => {
     return () => clearInterval(timer);
   }, []);
 
-  // useEffect(() => {
-  //   if (status === 'ok') {
-  //     message.success('注册成功！');
-  //     history.push({
-  //       pathname: '/user/login',
-  //       query: {
-  //         a: 'b',
-  //       },
-  //     });
-  //   }
+  useEffect(() => {
+    if (status === 'ok') {
+      message.success('注册成功！');
+      history.push({
+        pathname: '/user/login',
+        query: {
+          a: 'b',
+        },
+      });
+    }
 
-  //   return () => dispatch({
-  //     type: 'user/saveRegister',
-  //     payload: undefined,
-  //   })
-  // }, [status]);
+    return () =>
+      dispatch({
+        type: 'user/saveRegister',
+        payload: { status: undefined },
+      });
+  }, [status]);
 
   const refreshSvg = () => {
     setFlag(Math.random());
@@ -152,6 +153,7 @@ const Register: FC<PageType> = ({ dispatch, status, userInfo }) => {
         form={form}
         name="basic"
         size="large"
+        validateTrigger="onBlur"
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >
@@ -159,7 +161,7 @@ const Register: FC<PageType> = ({ dispatch, status, userInfo }) => {
           name="username"
           rules={[{ required: true, message: '请输入用户名' }]}
         >
-          <Input placeholder="设置一个昵称" />
+          <Input onFocus={e => e.preventDefault()} placeholder="设置一个昵称" />
         </Form.Item>
 
         <Form.Item

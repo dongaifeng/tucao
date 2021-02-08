@@ -73,3 +73,22 @@
     }
   }
 }
+
+.textOverflow() {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}
+
+.recommendItem {
+  cursor: pointer;
+  &:hover {
+    color: @primary-color;
+  }
+  .textOverflow();
+}
+
+.iconActive {
+  color: @primary-color;
+}

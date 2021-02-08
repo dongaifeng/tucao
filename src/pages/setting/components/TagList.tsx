@@ -5,6 +5,7 @@ import { PlusOutlined, CloseCircleFilled } from '@ant-design/icons';
 import { CurrentUser } from '@/models/gloal';
 import { StateType } from '@/models/user';
 import styles from '../index.less';
+import { TweenOneGroup } from 'rc-tween-one';
 
 // export interface TagType {
 //   key: string;
@@ -13,7 +14,7 @@ import styles from '../index.less';
 
 interface PropsType {
   onChange?: (val: string) => any;
-  // delTagHandle?: (val: string) => any;
+  delTagHandle?: (val: string) => any;
   value?: CurrentUser['tags'];
   delFlag?: boolean;
 }
@@ -32,7 +33,7 @@ const TagList: React.FC<PropsType> = ({
   const [inputValue, setInputValue] = useState<string>('');
 
   useEffect(() => {
-    const arr = value?.split(',');
+    const arr = value ? value?.split(',') : [];
     if (arr) setNewTags(arr);
   }, [value]);
 
@@ -72,9 +73,29 @@ const TagList: React.FC<PropsType> = ({
 
   return (
     <div className={styles.tags}>
-      {newTags.length > 0 &&
-        newTags.map((item: string, ind: number) => (
-          <Tag color="#f50" key={ind}>
+      <TweenOneGroup
+        enter={{
+          scale: 0.8,
+          opacity: 0,
+          type: 'from',
+          duration: 100,
+          onComplete: e => {
+            // e.target.style = '';
+          },
+        }}
+        leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+        appear={false}
+      >
+        {newTags.map((item: string, ind: number) => (
+          <Tag
+            className={styles.tagBtn}
+            color="red"
+            key={ind}
+            // onClose={e => {
+            //   e.preventDefault();
+            //   // delTagHandle(item as string);
+            // }}
+          >
             {item}
             {delFlag && (
               <div className={styles.delTag}>
@@ -83,23 +104,25 @@ const TagList: React.FC<PropsType> = ({
             )}
           </Tag>
         ))}
-      {inputVisible && (
-        <Input
-          ref={ref}
-          type="text"
-          size="small"
-          style={{ width: 78 }}
-          value={inputValue}
-          onChange={handleInputChange}
-          onBlur={handleInputConfirm}
-          onPressEnter={handleInputConfirm}
-        />
-      )}
-      {!inputVisible && (
-        <Tag onClick={showInput} style={{ borderStyle: 'dashed' }}>
-          <PlusOutlined />
-        </Tag>
-      )}
+
+        {inputVisible && (
+          <Input
+            ref={ref}
+            type="text"
+            size="small"
+            style={{ width: 78 }}
+            value={inputValue}
+            onChange={handleInputChange}
+            onBlur={handleInputConfirm}
+            onPressEnter={handleInputConfirm}
+          />
+        )}
+        {!inputVisible && (
+          <Tag onClick={showInput} style={{ borderStyle: 'dashed' }}>
+            <PlusOutlined />
+          </Tag>
+        )}
+      </TweenOneGroup>
     </div>
   );
 };
