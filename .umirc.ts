@@ -2,8 +2,9 @@ import { defineConfig } from 'umi';
 
 export default defineConfig({
   links: [{ rel: 'icon', href: 'favicon.png' }],
+  title: '吐槽网',
 
-  publicPath: process.env.NODE_ENV === 'production' ? '/public' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
 
   // 配置前端服务项， 低于.env文件优先级
   // devServer: {

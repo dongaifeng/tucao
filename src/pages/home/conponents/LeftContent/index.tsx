@@ -53,9 +53,9 @@ const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
         <img
           ref={ImgDom}
           style={{ borderRadius: '50%' }}
-          src={avatar}
+          src={avatar || logo}
           alt="我的头像"
-          onError={e => avatarError()}
+          // onError={e => avatarError()}
         />
       </Link>
       <div className={styles.name}>{name}</div>
