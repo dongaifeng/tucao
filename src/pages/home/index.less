@@ -2,13 +2,21 @@
 
 .contLeft {
   height: calc(100vh - 112px);
-  background: #eee;
-  opacity: 0.8;
+  background-color: rgba(255, 255, 255, 0.5);
+  :global {
+    .ant-menu {
+      background-color: transparent;
+    }
+  }
 }
 .contRight {
   height: calc(100vh - 112px);
-  background: #eee;
-  opacity: 0.8;
+  background-color: rgba(255, 255, 255, 0.5);
+  :global {
+    .ant-card {
+      background-color: transparent;
+    }
+  }
 }
 
 .content {

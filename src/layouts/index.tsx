@@ -22,9 +22,12 @@ const BasicLayout: React.FC<IRouteComponentProps> = props => {
         <Header className={styles.pageHeader}>
           <GlobalHeader />
         </Header>
-        <Content className={styles.cont}> {props.children}</Content>
+        <Content className={styles.cont}>
+          <div className={styles.frostedGlass}></div>
+          {props.children}
+        </Content>
         <Footer className={styles.footer}>
-          www.tucaoba.com by: dongaifeng
+          www.tucaobawamg.cn by: dongaifeng@qq.com
         </Footer>
       </Layout>
     </div>

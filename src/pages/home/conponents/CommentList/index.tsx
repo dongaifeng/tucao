@@ -9,15 +9,12 @@ import { StateType } from '../../model';
 moment.locale('zh-cn');
 const { TextArea } = Input;
 
-const CommentComp = ({
-  comments,
-  loading,
-  userDetail,
-}: {
+interface Iprops {
   comments: StateType['comments'];
   loading: boolean;
   userDetail: (id: number) => void;
-}) => (
+}
+const CommentComp = ({ comments, loading, userDetail }: Iprops) => (
   <List
     dataSource={comments}
     loading={loading}
@@ -153,7 +150,6 @@ export default connect(
     home: StateType;
     loading: { effects: { [key: string]: boolean } };
   }) => ({
-    _comments: home.comments,
     activeArticleId: home.activeArticleId,
     loading: loading.effects['home/featchComment'], // 使用dva-loading 监听异步请求
   }),

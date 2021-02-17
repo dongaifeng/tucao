@@ -8,6 +8,7 @@ import { StateType } from '../follow/model';
 import { queryFans } from '../follow/service';
 
 import { rederTab } from '../follow';
+import { open } from '@/utils';
 
 interface IProps {
   follows: FollowType[];
@@ -44,7 +45,8 @@ const Fans: FC<IProps> = ({ follows, dispatch }) => {
     if (!userId) {
       return message.info('此用户没有注册信息!');
     }
-    history.push(`/prefile/${userId}`);
+    // history.push(`/prefile/${userId}`);
+    open(`/prefile/${userId}`);
   };
 
   const renderFollowBtn = (item: FollowType) => (

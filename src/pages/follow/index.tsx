@@ -2,6 +2,7 @@ import React, { FC, useEffect } from 'react';
 import { Dispatch, connect, history } from 'umi';
 import { List, Avatar, Button, Card, message } from 'antd';
 import styles from './index.less';
+import { open } from '@/utils';
 
 import { StateType } from './model';
 import { FollowType } from './data.d';
@@ -69,7 +70,8 @@ const Follow: FC<IProps> = ({ dispatch, follows }) => {
     if (!userId) {
       return message.info('此用户没有注册信息!');
     }
-    history.push(`/prefile/${userId}`);
+    // history.push(`/prefile/${userId}`);
+    open(`/prefile/${userId}`);
   };
 
   return (

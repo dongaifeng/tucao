@@ -19,6 +19,7 @@ import styles from './index.less';
 import { StateType } from './model';
 import { ArticleType, CurrentUser } from '@/models/gloal';
 import { PageLoading } from '@ant-design/pro-layout';
+import { open } from '@/utils';
 
 interface TStateType {
   loading: boolean;
@@ -32,6 +33,7 @@ interface TStateType {
 interface PropsType {
   dispatch: Dispatch;
   list: ArticleType[];
+  comments: StateType['comments'];
   recommend: ArticleType[];
   currentUser: Partial<CurrentUser>;
   likeArticles: StateType['likeArticles'];
@@ -226,7 +228,8 @@ class ContentList extends React.Component<PropsType, TStateType> {
     if (!userId) {
       return message.info('此用户没有注册信息!');
     }
-    history.push(`/prefile/${userId}`);
+    // // history.push(`/prefile/${userId}`);
+    open(`/prefile/${userId}`);
   };
 
   componentDidMount() {
@@ -237,7 +240,14 @@ class ContentList extends React.Component<PropsType, TStateType> {
 
   render() {
     const { initLoading, loading, key, showCommentId, pubVal } = this.state;
-    const { list, recommend, currentUser, likeArticles, loadFlag } = this.props;
+    const {
+      list,
+      comments,
+      recommend,
+      currentUser,
+      likeArticles,
+      loadFlag,
+    } = this.props;
 
     const loadMore = !initLoading && (
       <div
@@ -343,7 +353,13 @@ class ContentList extends React.Component<PropsType, TStateType> {
                         ]}
                       >
                         <List.Item.Meta
-                          avatar={<Avatar src={item.avatar} alt="没有头像哦" />}
+                          avatar={
+                            <Avatar
+                              size="large"
+                              src={item.avatar}
+                              alt="没有头像哦"
+                            />
+                          }
                           title={
                             <Button
                               style={{ border: 0 }}
@@ -357,7 +373,10 @@ class ContentList extends React.Component<PropsType, TStateType> {
                         <span>{item.content}</span>
                       </List.Item>
                       {item.id === showCommentId ? (
-                        <CommentList userDetail={this.userDetail} />
+                        <CommentList
+                          list={comments}
+                          userDetail={this.userDetail}
+                        />
                       ) : null}
                     </>
                   )}
@@ -384,6 +403,7 @@ export default connect(
     loading: { effects: { [key: string]: boolean } };
   }) => ({
     list: home.list,
+    comments: home.comments,
     recommend: home.recommend,
     currentUser: home.currentUser,
     likeArticles: home.likeArticles,

@@ -27,11 +27,11 @@ const UserCard: FC<PropType> = ({ info }) => {
       <div>{info.introduce}</div>
 
       <div className={styles.detail}>
-        <p>
+        {/* <p>
           <Icon icon={PhoneOutlined} alt="手机号" />
 
           {info.phone}
-        </p>
+        </p> */}
 
         <p>
           <Icon icon={MailOutlined} alt="邮箱" />

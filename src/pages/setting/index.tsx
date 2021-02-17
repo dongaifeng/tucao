@@ -1,5 +1,5 @@
 import React, { Component, useRef, useState } from 'react';
-import { connect, Dispatch } from 'umi';
+import { connect, Dispatch, Link } from 'umi';
 import { Form, Input, Button, Select, Row, Col, message } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { StateType } from '@/models/user';
@@ -95,12 +95,13 @@ class Setting extends Component<PropsType & IStateType> {
   initData = () => {
     if (this.props.userInfo) {
       const { province, city } = this.props.userInfo;
-
-      this.setState({
-        cities: provinces[province].citys,
-        cityName: provinces[province].citys[city].name,
-        provinceName: provinces[province].name,
-      });
+      if (province && city) {
+        this.setState({
+          cities: provinces[province].citys,
+          cityName: provinces[province].citys[city].name,
+          provinceName: provinces[province].name,
+        });
+      }
     }
   };
 
@@ -147,9 +148,7 @@ class Setting extends Component<PropsType & IStateType> {
               <Form.Item
                 label="昵称"
                 name="name"
-                rules={[
-                  { required: true, message: 'Please input your username!' },
-                ]}
+                rules={[{ required: true, message: '请输入你的昵称！' }]}
               >
                 <Input />
               </Form.Item>
@@ -161,9 +160,7 @@ class Setting extends Component<PropsType & IStateType> {
               <Form.Item
                 label="手机号"
                 name="phone"
-                rules={[
-                  { required: true, message: 'Please input your password!' },
-                ]}
+                rules={[{ required: true, message: '请输入手机号!' }]}
               >
                 <Input />
               </Form.Item>
@@ -218,6 +215,9 @@ class Setting extends Component<PropsType & IStateType> {
                 <Button type="primary" htmlType="submit">
                   保存修改
                 </Button>
+                <Link to="/" style={{ marginLeft: '20px' }}>
+                  返回首页
+                </Link>
               </Form.Item>
             </Form>
           </Col>
