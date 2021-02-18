@@ -103,6 +103,11 @@ class ContentList extends React.Component<PropsType, TStateType> {
     <div>
       <Card
         title="推荐阅读"
+        bordered={false}
+        headStyle={{
+          height: '10px',
+          border: '0px',
+        }}
         extra={<a href="#">更多</a>}
         style={{
           width: '100%',
@@ -272,7 +277,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
           </Col>
 
           <Col className={styles.content} span={16}>
-            <div style={{ margin: '10px' }}>
+            <div style={{ margin: '10px 0px 10px 10px' }}>
               <Row>
                 <Col span={22}>
                   <Input.TextArea
@@ -290,7 +295,7 @@ class ContentList extends React.Component<PropsType, TStateType> {
                 </Col>
               </Row>
             </div>
-            <div style={{ width: '100%', padding: 10 }}>
+            <div style={{ width: '100%' }}>
               <Card
                 tabList={tabList}
                 activeTabKey={key}

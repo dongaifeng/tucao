@@ -1,20 +1,21 @@
 @import '~antd/es/style/themes/default.less';
+@import '../../global.less';
 
 .contLeft {
-  height: calc(100vh - 112px);
-  background-color: rgba(255, 255, 255, 0.5);
+  height: 100%;
   :global {
     .ant-menu {
-      background-color: transparent;
+      background-color: rgba(255, 255, 255, 0.2);
+      border: 0px;
     }
   }
 }
 .contRight {
-  height: calc(100vh - 112px);
-  background-color: rgba(255, 255, 255, 0.5);
+  height: 100%;
+
   :global {
     .ant-card {
-      background-color: transparent;
+      background-color: rgba(255, 255, 255, 0.2);
     }
   }
 }
@@ -22,20 +23,13 @@
 .content {
   height: calc(100vh - 112px);
   overflow-y: scroll;
-  opacity: 0.9;
+  opacity: 0.8;
   background: #eee;
   // margin-top: 100px;
 
   .iconActive {
     color: @primary-color;
   }
-}
-
-.textOverflow() {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  word-break: break-all;
 }
 
 .recommendItem {
