@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect, useRef } from 'react';
 import logo from '@/assets/nouser.png';
 import { connect, Dispatch, history, Link } from 'umi';
 
-import { Divider, Menu } from 'antd';
+import { Divider, Menu, message } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import { CurrentUser } from '@/models/gloal';
@@ -41,6 +41,13 @@ const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
     }
   };
 
+  const toSetting = () => {
+    if (!name) {
+      return message.info('您还没有登录， 请先登录');
+    }
+    history.push('/setting');
+  };
+
   useEffect(() => {
     dispatch({
       type: 'home/fetchUser',
@@ -49,15 +56,16 @@ const LeftContent: FC<PropsType> = ({ dispatch, currentUser }) => {
 
   return (
     <div className={styles.box}>
-      <Link to="/setting">
+      <div>
         <img
+          onClick={() => toSetting()}
           ref={ImgDom}
           style={{ borderRadius: '50%' }}
           src={avatar || logo}
           alt="我的头像"
           // onError={e => avatarError()}
         />
-      </Link>
+      </div>
       <div className={styles.name}>{name}</div>
       <div className={styles.sign}>{introduce}</div>
 

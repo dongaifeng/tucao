@@ -6,6 +6,8 @@
 import { extend } from 'umi-request';
 import { notification, message } from 'antd';
 
+const is_prod = process.env.NODE_ENV === 'production';
+
 const codeMessage: { [propName: number]: string } = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -31,7 +33,7 @@ const codeMessage: { [propName: number]: string } = {
 const errorHandler = (error: { response: Response }) => {
   const { response } = error;
 
-  if (response && response.status) {
+  if (response && response.status && !is_prod) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
     notification.error({
@@ -78,18 +80,20 @@ request.interceptors.response.use(async (response, options) => {
   // }
   const data = await response.clone().json();
   // console.log(data);
-  if (data.code === 'error') {
-    notification.error({
-      message: `请求错误 ${data.code}: ${response.url}`,
-      description: data.message,
-    });
-  } else if (data.code === 'timeout') {
-    notification.error({
-      message: `token过期，请重新登录： ${data.code}: ${response.url}`,
-      description: data.message,
-    });
-  } else if (data.code === 'no-login') {
-    message.info('您还没有登录');
+  if (!is_prod) {
+    if (data.code === 'error') {
+      notification.error({
+        message: `请求错误 ${data.code}: ${response.url}`,
+        description: data.message,
+      });
+    } else if (data.code === 'timeout') {
+      notification.error({
+        message: `token过期，请重新登录： ${data.code}: ${response.url}`,
+        description: data.message,
+      });
+    } else if (data.code === 'no-login') {
+      message.info('您还没有登录');
+    }
   }
   return response;
 });
