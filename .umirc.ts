@@ -18,12 +18,12 @@ export default defineConfig({
 
   proxy: {
     '/api': {
-      target: 'http://8.141.49.190:80/',
+      target: 'http://localhost:7000/',
       changeOrigin: true,
       pathRewrite: { '^/api': '/api' },
     },
     '/public': {
-      target: 'http://8.141.49.190:80/',
+      target: 'http://localhost:7000/',
       changeOrigin: true,
     },
   },
