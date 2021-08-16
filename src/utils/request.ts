@@ -6,7 +6,9 @@
 import { extend } from 'umi-request';
 import { notification, message } from 'antd';
 
-const is_prod = process.env.NODE_ENV === 'production';
+console.log(process.env.NODE_ENV, '-----');
+
+const is_dev = process.env.NODE_ENV === 'development';
 
 const codeMessage: { [propName: number]: string } = {
   200: '服务器成功返回请求的数据。',
@@ -33,7 +35,7 @@ const codeMessage: { [propName: number]: string } = {
 const errorHandler = (error: { response: Response }) => {
   const { response } = error;
 
-  if (response && response.status && !is_prod) {
+  if (response && response.status && is_dev) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
     notification.error({
@@ -79,8 +81,9 @@ request.interceptors.response.use(async (response, options) => {
   //   localStorage.setItem('x-auth-token', token);
   // }
   const data = await response.clone().json();
-  // console.log(data);
-  if (!is_prod) {
+  console.log(is_dev);
+
+  if (is_dev) {
     if (data.code === 'error') {
       notification.error({
         message: `请求错误 ${data.code}: ${response.url}`,
